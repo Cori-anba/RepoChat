@@ -55,21 +55,19 @@ export const GitHubRecommendations: React.FC = () => {
   );
   const [filters, setFilters] = usePersistedState(GITHUB_STORAGE_KEYS.FILTERS, {
     language: "",
-    sort: "", // 排序方式：''（默认）, 'stars-asc', 'stars-desc'
+    sort: "",
     updatedAfter: "",
   });
   const [savedSearchResults, setSavedSearchResults] =
     useState<SearchResultData | null>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
-  // Markdown解析器
   const md = new MarkdownIt({
     html: true,
     breaks: true,
     linkify: true,
   });
 
-  // 组件挂载时检查保存的搜索结果
   useEffect(() => {
     const savedResults = getSearchResults(GITHUB_STORAGE_KEYS.SEARCH_RESULTS);
     if (savedResults) {
@@ -77,24 +75,20 @@ export const GitHubRecommendations: React.FC = () => {
     }
   }, []);
 
-  // 获取热门项目
   const { data: trendingData, isLoading: isLoadingTrending } = useQuery({
     queryKey: ["github-trending"],
     queryFn: () => api.getGitHubTrending(),
     enabled: true,
   });
 
-  // 基础搜索项目
   const searchMutation = useMutation({
     mutationFn: (query: string) => {
-      // 清除之前的搜索结果缓存
       clearPersistedState(GITHUB_STORAGE_KEYS.SEARCH_RESULTS);
       setSavedSearchResults(null);
       return api.searchGitHubRepos(query);
     },
     onSuccess: (data) => {
       toast.success(`找到 ${data.repositories.length} 个项目`);
-      // 保存搜索结果
       saveSearchResults(GITHUB_STORAGE_KEYS.SEARCH_RESULTS, {
         repositories: data.repositories,
         searchType: "basic",
@@ -107,10 +101,8 @@ export const GitHubRecommendations: React.FC = () => {
     },
   });
 
-  // 增强搜索项目
   const enhancedSearchMutation = useMutation({
     mutationFn: () => {
-      // 清除之前的搜索结果缓存
       clearPersistedState(GITHUB_STORAGE_KEYS.SEARCH_RESULTS);
       setSavedSearchResults(null);
       return api.enhancedSearchGitHubRepos(
@@ -122,11 +114,9 @@ export const GitHubRecommendations: React.FC = () => {
     },
     onSuccess: (data) => {
       toast.success(`找到 ${data.repositories.length} 个项目`);
-      // 记录用户搜索行为
       data.repositories.forEach((repo: Repository) => {
         api.recordGitHubAction(repo.full_name, "search", searchQuery);
       });
-      // 保存搜索结果
       saveSearchResults(GITHUB_STORAGE_KEYS.SEARCH_RESULTS, {
         repositories: data.repositories,
         searchType: "enhanced",
@@ -140,17 +130,14 @@ export const GitHubRecommendations: React.FC = () => {
     },
   });
 
-  // 获取个性化推荐
   const recommendationMutation = useMutation({
     mutationFn: () => {
-      // 清除之前的搜索结果缓存
       clearPersistedState(GITHUB_STORAGE_KEYS.SEARCH_RESULTS);
       setSavedSearchResults(null);
       return api.getGitHubRecommendations("default", 10);
     },
     onSuccess: (data) => {
       toast.success(`为您推荐了 ${data.repositories.length} 个项目`);
-      // 保存推荐结果
       saveSearchResults(GITHUB_STORAGE_KEYS.SEARCH_RESULTS, {
         repositories: data.repositories,
         searchType: "recommendation",
@@ -162,7 +149,6 @@ export const GitHubRecommendations: React.FC = () => {
     },
   });
 
-  // 获取项目详情
   const detailMutation = useMutation({
     mutationFn: ({ owner, repo }: { owner: string; repo: string }) =>
       api.getGitHubRepoDetails(owner, repo),
@@ -177,7 +163,6 @@ export const GitHubRecommendations: React.FC = () => {
     },
   });
 
-  // 克隆项目
   const cloneMutation = useMutation({
     mutationFn: ({ url, path }: { url: string; path?: string }) =>
       api.cloneRepository(url, path),
@@ -202,10 +187,8 @@ export const GitHubRecommendations: React.FC = () => {
       showFilters &&
       (filters.language || filters.sort || filters.updatedAfter)
     ) {
-      // 使用增强搜索
       enhancedSearchMutation.mutate();
     } else {
-      // 使用基础搜索
       searchMutation.mutate(searchQuery.trim());
     }
   };
@@ -272,7 +255,6 @@ export const GitHubRecommendations: React.FC = () => {
     return new Date(dateString).toLocaleDateString("zh-CN");
   };
 
-  // 常用编程语言选项
   const programmingLanguages = [
     "JavaScript",
     "TypeScript",
@@ -302,158 +284,135 @@ export const GitHubRecommendations: React.FC = () => {
   ];
 
   return (
-    <div className="p-6">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="p-8">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">GitHub项目推荐</h1>
-          <p className="mt-2 text-gray-600">发现热门的GitHub项目</p>
+          <p className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider mb-1">
+            Discover
+          </p>
+          <h1 className="text-[26px] font-bold text-[#1e1b4b] tracking-tight">
+            GitHub Recommendations
+          </h1>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => recommendationMutation.mutate()}
-            disabled={recommendationMutation.isPending}
-            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 flex items-center gap-2"
-          >
-            {recommendationMutation.isPending ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                推送中...
-              </>
-            ) : (
-              <>
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-                智能推送
-              </>
-            )}
-          </button>
-        </div>
+        <button
+          onClick={() => recommendationMutation.mutate()}
+          disabled={recommendationMutation.isPending}
+          className="btn-primary gap-2 text-[13px] disabled:opacity-50"
+        >
+          {recommendationMutation.isPending ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              Loading...
+            </>
+          ) : (
+            <>
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Smart Recommend
+            </>
+          )}
+        </button>
       </div>
 
-      {/* 搜索框 */}
-      <div className="mb-8">
-        <form onSubmit={handleSearch} className="flex gap-4">
+      {/* Search bar */}
+      <div className="mb-6">
+        <form onSubmit={handleSearch} className="flex gap-3">
           <div className="flex-1 relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <MagnifyingGlassIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="搜索GitHub项目..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search GitHub repositories..."
+              className="w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-gray-200 bg-white/70 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-indigo-400/40 focus:border-indigo-400 transition-all"
             />
           </div>
           <button
             type="submit"
-            disabled={
-              searchMutation.isPending || enhancedSearchMutation.isPending
-            }
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            disabled={searchMutation.isPending || enhancedSearchMutation.isPending}
+            className="btn-primary text-[13px] disabled:opacity-50"
           >
             {searchMutation.isPending || enhancedSearchMutation.isPending
-              ? "搜索中..."
-              : "搜索"}
+              ? "Searching..."
+              : "Search"}
           </button>
           <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
-            className={`px-4 py-3 rounded-lg flex items-center gap-2 ${
+            className={`inline-flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-medium rounded-xl transition-all duration-200 ${
               showFilters || hasActiveFilters
-                ? "bg-blue-100 text-blue-700 border border-blue-300"
-                : "bg-gray-100 text-gray-700 border border-gray-300"
-            } hover:bg-blue-50`}
+                ? "bg-indigo-50 text-indigo-600 border border-indigo-200"
+                : "bg-white/60 backdrop-blur-sm border border-gray-200 text-gray-600 hover:bg-white/80"
+            }`}
           >
-            <FunnelIcon className="h-5 w-5" />
-            筛选
+            <FunnelIcon className="h-4 w-4" />
+            Filters
             {hasActiveFilters && (
-              <span className="bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              <span className="w-4 h-4 bg-indigo-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
                 !
               </span>
             )}
           </button>
         </form>
 
-        {/* 筛选面板 */}
+        {/* Filter panel */}
         {showFilters && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="mt-3 p-5 rounded-xl bg-white/70 backdrop-blur-md border border-gray-200">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-700">高级筛选</h3>
-              <button
-                onClick={() => setShowFilters(false)}
-                className="p-1 text-gray-400 hover:text-gray-600"
-              >
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Advanced Filters</h3>
+              <button onClick={() => setShowFilters(false)} className="p-1 text-gray-400 hover:text-gray-600 rounded">
                 <XMarkIcon className="h-4 w-4" />
               </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {/* 编程语言筛选 */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  编程语言
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                  Language
                 </label>
                 <select
                   value={filters.language}
-                  onChange={(e) =>
-                    handleFilterChange("language", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  onChange={(e) => handleFilterChange("language", e.target.value)}
+                  className="input-field text-sm"
                 >
-                  <option value="">所有语言</option>
+                  <option value="">All Languages</option>
                   {programmingLanguages.map((lang) => (
-                    <option key={lang} value={lang}>
-                      {lang}
-                    </option>
+                    <option key={lang} value={lang}>{lang}</option>
                   ))}
                 </select>
               </div>
 
-              {/* 排序方式 */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  排序方式
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                  Sort By
                 </label>
                 <select
                   value={filters.sort}
                   onChange={(e) => handleFilterChange("sort", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  className="input-field text-sm"
                 >
-                  <option value="">默认排序</option>
-                  <option value="stars-asc">星标数升序</option>
-                  <option value="stars-desc">星标数降序</option>
+                  <option value="">Default</option>
+                  <option value="stars-asc">Stars (Low to High)</option>
+                  <option value="stars-desc">Stars (High to Low)</option>
                 </select>
               </div>
 
-              {/* 占位符，保持布局 */}
               <div></div>
 
-              {/* 更新时间筛选 */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  更新时间
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                  Updated
                 </label>
                 <select
                   value={filters.updatedAfter}
-                  onChange={(e) =>
-                    handleFilterChange("updatedAfter", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  onChange={(e) => handleFilterChange("updatedAfter", e.target.value)}
+                  className="input-field text-sm"
                 >
-                  <option value="">全部时间</option>
-                  <option value="7d">最近7天</option>
-                  <option value="30d">最近30天</option>
-                  <option value="90d">最近90天</option>
+                  <option value="">All Time</option>
+                  <option value="7d">Last 7 days</option>
+                  <option value="30d">Last 30 days</option>
+                  <option value="90d">Last 90 days</option>
                 </select>
               </div>
             </div>
@@ -462,215 +421,159 @@ export const GitHubRecommendations: React.FC = () => {
               <button
                 onClick={clearFilters}
                 disabled={!hasActiveFilters}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-xs text-gray-400 hover:text-gray-600 disabled:opacity-30 transition-colors"
               >
-                清除筛选
+                Clear Filters
               </button>
               <button
                 onClick={handleEnhancedSearch}
-                disabled={
-                  enhancedSearchMutation.isPending || !searchQuery.trim()
-                }
-                className="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 disabled:opacity-50"
+                disabled={enhancedSearchMutation.isPending || !searchQuery.trim()}
+                className="inline-flex items-center px-4 py-2 text-xs font-semibold rounded-lg text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors disabled:opacity-40"
               >
-                {enhancedSearchMutation.isPending ? "搜索中..." : "应用筛选"}
+                {enhancedSearchMutation.isPending ? "Searching..." : "Apply Filters"}
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* 项目列表 */}
+      {/* Repository list */}
       {isLoadingTrending && !searchMutation.data ? (
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-500">加载热门项目中...</p>
+        <div className="flex flex-col items-center justify-center py-20 gap-3">
+          <div className="w-10 h-10 border-[3px] border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
+          <p className="text-sm text-gray-400">Loading trending projects...</p>
         </div>
       ) : repositories.length === 0 ? (
-        <div className="text-center py-12">
-          <CodeBracketIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500">暂无项目</p>
-          <p className="text-sm text-gray-400 mt-1">
-            尝试搜索或等待热门项目加载
-          </p>
+        <div className="flex flex-col items-center justify-center py-20 gap-3">
+          <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center">
+            <CodeBracketIcon className="h-8 w-8 text-gray-300" />
+          </div>
+          <p className="text-sm text-gray-400">No repositories found</p>
+          <p className="text-xs text-gray-300">Try searching or wait for trending projects to load</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {repositories.map((repo: Repository) => (
-            <div
-              key={repo.id}
-              className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow"
-            >
-              <div className="p-6">
-                {/* 项目头信息 */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 truncate">
-                      {repo.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 truncate">
-                      {repo.owner.login}
-                    </p>
-                  </div>
-                  <img
-                    src={repo.owner.avatar_url}
-                    alt={repo.owner.login}
-                    className="w-10 h-10 rounded-full ml-3"
-                  />
+            <div key={repo.id} className="glass-card p-5 flex flex-col">
+              <div className="flex items-start gap-3 mb-3">
+                <img
+                  src={repo.owner.avatar_url}
+                  alt={repo.owner.login}
+                  className="w-9 h-9 rounded-full ring-2 ring-white flex-shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-[15px] font-semibold text-[#1e1b4b] truncate leading-tight">
+                    {repo.name}
+                  </h3>
+                  <p className="text-xs text-gray-400 truncate">{repo.owner.login}</p>
                 </div>
+              </div>
 
-                {/* 项目描述 */}
-                {repo.description && (
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">
-                    {repo.description}
-                  </p>
+              {repo.description && (
+                <p className="text-xs text-gray-500 mb-3 line-clamp-3 leading-relaxed">
+                  {repo.description}
+                </p>
+              )}
+
+              <div className="flex items-center gap-3 text-xs text-gray-400 mb-3 mt-auto">
+                <div className="flex items-center gap-1">
+                  <StarIcon className="h-3.5 w-3.5 text-amber-400" />
+                  <span>{formatNumber(repo.stargazers_count)}</span>
+                </div>
+                <span>{formatNumber(repo.forks_count)} forks</span>
+                {repo.language && (
+                  <span className="badge badge-indigo ml-auto">{repo.language}</span>
                 )}
+              </div>
 
-                {/* 项目统计 */}
-                <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center">
-                      <StarIcon className="h-4 w-4 mr-1" />
-                      <span>{formatNumber(repo.stargazers_count)}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-xs mr-1">🍴</span>
-                      <span>{formatNumber(repo.forks_count)}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-xs mr-1">👁️</span>
-                      <span>{formatNumber(repo.watchers_count)}</span>
-                    </div>
-                  </div>
-                  {repo.language && (
-                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                      {repo.language}
-                    </span>
-                  )}
-                </div>
+              <div className="flex items-center text-[11px] text-gray-300 mb-4">
+                <CalendarIcon className="h-3 w-3 mr-1" />
+                Updated {formatDate(repo.updated_at)}
+              </div>
 
-                {/* 更新时间 */}
-                <div className="flex items-center text-xs text-gray-400 mb-4">
-                  <CalendarIcon className="h-3 w-3 mr-1" />
-                  更新于 {formatDate(repo.updated_at)}
-                </div>
-
-                {/* 操作按钮 */}
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handleViewDetails(repo)}
-                    disabled={isLoadingDetail}
-                    className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isLoadingDetail ? "加载中..." : "查看详情"}
-                  </button>
-                  <button
-                    onClick={() => handleClone(repo)}
-                    className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
-                  >
-                    克隆
-                  </button>
-                </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleViewDetails(repo)}
+                  disabled={isLoadingDetail}
+                  className="flex-1 py-2 text-xs font-medium rounded-lg bg-white/60 border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-40"
+                >
+                  Details
+                </button>
+                <button
+                  onClick={() => handleClone(repo)}
+                  className="flex-1 py-2 text-xs font-semibold text-white rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 transition-all shadow-sm shadow-indigo-500/20"
+                >
+                  Clone
+                </button>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* 项目详情模态框 */}
+      {/* Detail modal */}
       {showDetailModal && selectedRepo && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
-            {/* 头部 */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50">
-              <div className="flex items-center space-x-4">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-card-static w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between p-5 border-b border-gray-100">
+              <div className="flex items-center gap-3">
                 <img
                   src={selectedRepo.owner.avatar_url}
                   alt={selectedRepo.owner.login}
-                  className="w-12 h-12 rounded-full"
+                  className="w-10 h-10 rounded-full ring-2 ring-white"
                 />
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-lg font-bold text-[#1e1b4b] tracking-tight">
                     {selectedRepo.full_name}
                   </h2>
-                  <p className="text-sm text-gray-600">
-                    {selectedRepo.owner.login}
-                  </p>
+                  <p className="text-xs text-gray-400">{selectedRepo.owner.login}</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowDetailModal(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
               >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <XMarkIcon className="h-5 w-5" />
               </button>
             </div>
 
-            {/* 内容区域 */}
-            <div className="flex-1 overflow-y-auto p-6">
-              {/* 项目统计信息 */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-blue-50 rounded-lg p-4 text-center">
-                  <StarIcon className="w-6 h-6 text-blue-600 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-blue-900">
-                    {formatNumber(selectedRepo.stargazers_count)}
-                  </div>
-                  <div className="text-sm text-blue-600">Stars</div>
+            <div className="flex-1 overflow-y-auto p-5">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                <div className="bg-indigo-50/60 rounded-xl p-4 text-center">
+                  <StarIcon className="w-5 h-5 text-indigo-500 mx-auto mb-1" />
+                  <div className="text-xl font-bold text-indigo-700">{formatNumber(selectedRepo.stargazers_count)}</div>
+                  <div className="text-[10px] text-indigo-400 uppercase tracking-wider">Stars</div>
                 </div>
-                <div className="bg-green-50 rounded-lg p-4 text-center">
-                  <span className="text-2xl mb-2">🍴</span>
-                  <div className="text-2xl font-bold text-green-900">
-                    {formatNumber(selectedRepo.forks_count)}
-                  </div>
-                  <div className="text-sm text-green-600">Forks</div>
+                <div className="bg-purple-50/60 rounded-xl p-4 text-center">
+                  <span className="text-xl">🍴</span>
+                  <div className="text-xl font-bold text-purple-700">{formatNumber(selectedRepo.forks_count)}</div>
+                  <div className="text-[10px] text-purple-400 uppercase tracking-wider">Forks</div>
                 </div>
-                <div className="bg-purple-50 rounded-lg p-4 text-center">
-                  <span className="text-2xl mb-2">👁️</span>
-                  <div className="text-2xl font-bold text-purple-900">
-                    {formatNumber(selectedRepo.watchers_count)}
-                  </div>
-                  <div className="text-sm text-purple-600">Watchers</div>
+                <div className="bg-pink-50/60 rounded-xl p-4 text-center">
+                  <span className="text-xl">👁️</span>
+                  <div className="text-xl font-bold text-pink-700">{formatNumber(selectedRepo.watchers_count)}</div>
+                  <div className="text-[10px] text-pink-400 uppercase tracking-wider">Watchers</div>
                 </div>
-                <div className="bg-orange-50 rounded-lg p-4 text-center">
-                  <CodeBracketIcon className="w-6 h-6 text-orange-600 mx-auto mb-2" />
-                  <div className="text-xl font-bold text-orange-900">
-                    {selectedRepo.language || "未知"}
-                  </div>
-                  <div className="text-sm text-orange-600">语言</div>
+                <div className="bg-emerald-50/60 rounded-xl p-4 text-center">
+                  <CodeBracketIcon className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
+                  <div className="text-base font-bold text-emerald-700">{selectedRepo.language || "N/A"}</div>
+                  <div className="text-[10px] text-emerald-400 uppercase tracking-wider">Language</div>
                 </div>
               </div>
 
-              {/* 项目描述 */}
               {selectedRepo.description && (
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    项目描述
-                  </h3>
-                  <p className="text-gray-700 leading-relaxed bg-gray-50 rounded-lg p-4">
+                <div className="mb-6">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Description</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed bg-gray-50/60 rounded-xl p-4 border border-gray-100">
                     {selectedRepo.description}
                   </p>
                 </div>
               )}
 
-              {/* README内容 */}
               {selectedRepo.readme && (
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    README
-                  </h3>
-                  <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">README</h3>
+                  <div className="border border-gray-200 rounded-xl overflow-hidden">
                     <div
                       className="markdown-body p-6 bg-white"
                       dangerouslySetInnerHTML={{
@@ -680,89 +583,76 @@ export const GitHubRecommendations: React.FC = () => {
                   </div>
                 </div>
               )}
-
-              {/* 更新时间 */}
-              <div className="mt-6 flex items-center text-sm text-gray-500">
-                <CalendarIcon className="w-4 h-4 mr-2" />
-                最后更新: {formatDate(selectedRepo.updated_at)}
-              </div>
             </div>
 
-            {/* 底部操作按钮 */}
-            <div className="border-t border-gray-200 p-6 bg-gray-50">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <a
-                  href={selectedRepo.html_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center font-medium flex items-center justify-center"
-                >
-                  <svg
-                    className="w-5 h-5 mr-2"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                  </svg>
-                  在GitHub上查看
-                </a>
-                <button
-                  onClick={() => handleClone(selectedRepo)}
-                  className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
-                >
-                  克隆项目
-                </button>
-                <button
-                  onClick={() => setShowDetailModal(false)}
-                  className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors font-medium"
-                >
-                  关闭
-                </button>
-              </div>
+            <div className="border-t border-gray-100 p-5 flex flex-col sm:flex-row gap-3">
+              <a
+                href={selectedRepo.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary flex-1 justify-center gap-2 text-[13px]"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                </svg>
+                View on GitHub
+              </a>
+              <button
+                onClick={() => handleClone(selectedRepo)}
+                className="inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition-colors flex-1"
+              >
+                Clone Repository
+              </button>
+              <button
+                onClick={() => setShowDetailModal(false)}
+                className="btn-secondary flex-1 justify-center text-[13px]"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 克隆模态框 */}
+      {/* Clone modal */}
       {showCloneModal && selectedRepo && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-semibold mb-4">克隆项目</h2>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="glass-card-static w-full max-w-md p-6 shadow-2xl">
+            <h2 className="text-lg font-bold text-[#1e1b4b] tracking-tight mb-4">Clone Repository</h2>
 
             <div className="mb-4">
-              <p className="text-sm text-gray-600 mb-2">项目URL:</p>
-              <p className="text-sm font-mono bg-gray-100 p-2 rounded">
+              <p className="text-xs text-gray-400 mb-1.5">Repository URL:</p>
+              <p className="text-sm font-mono bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-gray-600">
                 {selectedRepo.html_url}.git
               </p>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                本地路径（可选）
+            <div className="mb-5">
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                Local Path (optional)
               </label>
               <input
                 type="text"
                 value={clonePath}
                 onChange={(e) => setClonePath(e.target.value)}
                 placeholder="/path/to/clone"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-field"
               />
             </div>
 
-            <div className="flex space-x-3">
+            <div className="flex gap-3">
               <button
                 onClick={handleConfirmClone}
                 disabled={cloneMutation.isPending}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="btn-primary flex-1 justify-center text-[13px] disabled:opacity-50"
               >
-                {cloneMutation.isPending ? "克隆中..." : "克隆"}
+                {cloneMutation.isPending ? "Cloning..." : "Clone"}
               </button>
               <button
                 onClick={() => setShowCloneModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                className="btn-secondary flex-1 justify-center text-[13px]"
               >
-                取消
+                Cancel
               </button>
             </div>
           </div>

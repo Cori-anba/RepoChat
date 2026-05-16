@@ -18,7 +18,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="flex flex-col h-screen bg-gray-50">
+        <div className="flex flex-col h-screen page-bg">
           {/* 顶部导航栏 */}
           <Header />
 

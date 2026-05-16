@@ -1,0 +1,190 @@
+<h2>全新设计方向 — 精炼编辑风 × 暗色工具面板</h2>
+<p class="subtitle">灵感来自 Garden 主题系统中的 midnight-press（电影级编辑深色）+ monochrome-print（精炼印刷）+ warm-keynote（现代 SaaS）。<br>核心理念：<strong>暗色侧边栏作为"编辑台"，亮色内容区作为"阅读面"，单一强调色贯穿全局</strong>。</p>
+
+<div class="section">
+  <h3>设计 DNA</h3>
+</div>
+
+<div class="options" data-multiselect>
+  <div class="option" data-choice="dna-dark" onclick="toggleSelect(this)">
+    <div class="letter">1</div>
+    <div class="content">
+      <h3>深色沉浸侧栏</h3>
+      <p>侧边栏采用 espresso 暖深色调（非纯黑），营造"控制台/编辑室"氛围。导航项带微妙发光选中态，图标线条精炼。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="dna-space" onclick="toggleSelect(this)">
+    <div class="letter">2</div>
+    <div class="content">
+      <h3>大气留白</h3>
+      <p>内容区大量留白，卡片间距宽松，呼吸感强烈。标题使用更克制的字重和尺寸层级，不靠大字喊叫。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="dna-accent" onclick="toggleSelect(this)">
+    <div class="letter">3</div>
+    <div class="content">
+      <h3>单一琥珀强调色</h3>
+      <p>全局只用一种饱和色（暖琥珀/橙），其余全为中性色渐变。选中态、按钮、链接、数据高亮均用同一色相。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="dna-line" onclick="toggleSelect(this)">
+    <div class="letter">4</div>
+    <div class="content">
+      <h3>1px 发丝分割线</h3>
+      <p>取消厚重阴影卡片，改用极细 1px 边框 + 微妙背景色区分层级。monochrome-print 式的精炼表达。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="dna-type" onclick="toggleSelect(this)">
+    <div class="letter">5</div>
+    <div class="content">
+      <h3>编辑级字体层级</h3>
+      <p>标题小号加粗而非大号，正文用舒适的字重和行高。等宽字体用于数据/代码，形成技术工具的节奏感。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="dna-motion" onclick="toggleSelect(this)">
+    <div class="letter">6</div>
+    <div class="content">
+      <h3>慢速电影级过渡</h3>
+      <p>hover 用 300-400ms 缓动而非瞬间切换，路由切换带微妙渐变，卡片 hover 微微上浮而非剧烈变化。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Dashboard 页面 Mockup（点击可放大感受细节）</h3>
+</div>
+
+<div class="cards">
+  <div class="card" data-choice="dashboard-mock" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;height:440px;border-radius:6px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,0.08);border:1px solid #e8e8e4">
+        <!-- 暗色侧栏 -->
+        <div style="width:220px;background:#1c1c1e;color:#98989b;padding:20px 16px;display:flex;flex-direction:column;gap:2px;font-size:13px;border-right:1px solid #2c2c2e">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px;padding:0 4px">
+            <div style="width:28px;height:28px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px">&#x25b2;</div>
+            <span style="color:#e4e4e5;font-weight:600;font-size:15px;letter-spacing:-0.01em">RePoChat</span>
+          </div>
+          <div style="padding:8px 10px;border-radius:6px;background:rgba(245,158,11,0.12);color:#f59e0b;font-weight:500;font-size:13px;margin-bottom:2px">概览</div>
+          <div style="padding:8px 10px;border-radius:6px;color:#98989b;font-size:13px">项目</div>
+          <div style="padding:8px 10px;border-radius:6px;color:#98989b;font-size:13px">GitHub 推荐</div>
+          <div style="padding:8px 10px;border-radius:6px;color:#98989b;font-size:13px">GitHub 设置</div>
+          <div style="padding:8px 10px;border-radius:6px;color:#98989b;font-size:13px">AI 设置</div>
+          <div style="padding:8px 10px;border-radius:6px;color:#98989b;font-size:13px">MCP 设置</div>
+          <div style="margin-top:auto;border-top:1px solid #2c2c2e;padding-top:16px">
+            <div style="display:flex;align-items:center;gap:8px;padding:6px">
+              <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;color:#1c1c1e;font-size:10px;font-weight:700">AI</div>
+              <span style="color:#e4e4e5;font-size:12px">DeepSeek V3</span>
+            </div>
+          </div>
+        </div>
+        <!-- 亮色内容区 -->
+        <div style="flex:1;background:#fafaf8;padding:32px 36px;overflow-y:auto">
+          <!-- 顶部导航条 -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:36px">
+            <div>
+              <div style="font-size:12px;color:#a1a1a1;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;font-weight:500">Overview</div>
+              <div style="font-size:22px;font-weight:600;color:#1c1c1e;letter-spacing:-0.02em">Dashboard</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="padding:8px 16px;background:#1c1c1e;color:#fafaf8;border-radius:6px;font-size:13px;font-weight:500;letter-spacing:-0.01em">New Repository</div>
+            </div>
+          </div>
+          <!-- 统计卡片 -->
+          <div style="display:flex;gap:16px;margin-bottom:32px">
+            <div style="flex:1;background:#fff;border:1px solid #e8e8e4;border-radius:8px;padding:20px">
+              <div style="font-size:11px;color:#a1a1a1;text-transform:uppercase;letter-spacing:0.05em;font-weight:500;margin-bottom:8px">Total Projects</div>
+              <div style="font-size:32px;font-weight:600;color:#1c1c1e;letter-spacing:-0.02em;line-height:1">5</div>
+            </div>
+            <div style="flex:1;background:#fff;border:1px solid #e8e8e4;border-radius:8px;padding:20px">
+              <div style="font-size:11px;color:#a1a1a1;text-transform:uppercase;letter-spacing:0.05em;font-weight:500;margin-bottom:8px">Active Repos</div>
+              <div style="font-size:32px;font-weight:600;color:#1c1c1e;letter-spacing:-0.02em;line-height:1">3</div>
+            </div>
+            <div style="flex:1;background:#fff;border:1px solid #e8e8e4;border-radius:8px;padding:20px">
+              <div style="font-size:11px;color:#a1a1a1;text-transform:uppercase;letter-spacing:0.05em;font-weight:500;margin-bottom:8px">Last Updated</div>
+              <div style="font-size:32px;font-weight:600;color:#1c1c1e;letter-spacing:-0.02em;line-height:1">Now</div>
+            </div>
+          </div>
+          <!-- 最近项目表格 -->
+          <div style="background:#fff;border:1px solid #e8e8e4;border-radius:8px;overflow:hidden">
+            <div style="padding:16px 20px;border-bottom:1px solid #e8e8e4;font-size:13px;font-weight:600;color:#1c1c1e">Recent Projects</div>
+            <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0ec;font-size:13px">
+              <div>
+                <div style="color:#1c1c1e;font-weight:500;margin-bottom:2px">my-awesome-project</div>
+                <div style="color:#98989b;font-size:12px">/home/projects/my-awesome-project</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;color:#98989b;font-size:12px">
+                <span style="background:#f5f5f0;padding:3px 8px;border-radius:4px;color:#787873;font-size:11px">main</span>
+                <span>42 commits</span>
+                <span style="color:#a1a1a1">2026-05-15</span>
+              </div>
+            </div>
+            <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0ec;font-size:13px">
+              <div>
+                <div style="color:#1c1c1e;font-weight:500;margin-bottom:2px">another-repo</div>
+                <div style="color:#98989b;font-size:12px">/home/projects/another-repo</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;color:#98989b;font-size:12px">
+                <span style="background:#f5f5f0;padding:3px 8px;border-radius:4px;color:#787873;font-size:11px">develop</span>
+                <span>128 commits</span>
+                <span style="color:#a1a1a1">2026-05-14</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Dashboard — 精炼编辑风</h3>
+      <p>暗色侧栏 + 暖白内容区 + 1px边框卡片 + 琥珀强调色</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>配色参考</h3>
+</div>
+
+<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px">
+  <div style="flex:1;min-width:120px">
+    <div style="width:100%;height:60px;background:#1c1c1e;border-radius:6px 6px 0 0"></div>
+    <div style="padding:8px;background:#fff;border:1px solid #e8e8e4;border-top:0;border-radius:0 0 6px 6px;text-align:center;font-size:12px;color:#525252">Shell<br><code style="font-size:10px;color:#a1a1a1">#1c1c1e</code></div>
+  </div>
+  <div style="flex:1;min-width:120px">
+    <div style="width:100%;height:60px;background:#28282a;border-radius:6px 6px 0 0"></div>
+    <div style="padding:8px;background:#fff;border:1px solid #e8e8e4;border-top:0;border-radius:0 0 6px 6px;text-align:center;font-size:12px;color:#525252">Surface<br><code style="font-size:10px;color:#a1a1a1">#28282a</code></div>
+  </div>
+  <div style="flex:1;min-width:120px">
+    <div style="width:100%;height:60px;background:#fafaf8;border-radius:6px 6px 0 0;border:1px solid #e8e8e4;border-bottom:0"></div>
+    <div style="padding:8px;background:#fff;border:1px solid #e8e8e4;border-top:0;border-radius:0 0 6px 6px;text-align:center;font-size:12px;color:#525252">Page BG<br><code style="font-size:10px;color:#a1a1a1">#fafaf8</code></div>
+  </div>
+  <div style="flex:1;min-width:120px">
+    <div style="width:100%;height:60px;background:#f59e0b;border-radius:6px 6px 0 0"></div>
+    <div style="padding:8px;background:#fff;border:1px solid #e8e8e4;border-top:0;border-radius:0 0 6px 6px;text-align:center;font-size:12px;color:#525252">Accent<br><code style="font-size:10px;color:#a1a1a1">#f59e0b</code></div>
+  </div>
+  <div style="flex:1;min-width:120px">
+    <div style="width:100%;height:60px;background:#e8e8e4;border-radius:6px 6px 0 0"></div>
+    <div style="padding:8px;background:#fff;border:1px solid #e8e8e4;border-top:0;border-radius:0 0 6px 6px;text-align:center;font-size:12px;color:#525252">Rule<br><code style="font-size:10px;color:#a1a1a1">#e8e8e4</code></div>
+  </div>
+</div>
+
+<div class="pros-cons">
+  <div class="pros">
+    <h4>这个方案的优势</h4>
+    <ul>
+      <li>暗色侧栏营造"工具感"和沉浸式工作氛围</li>
+      <li>亮色内容区保持高可读性</li>
+      <li>单一强调色建立强烈的品牌识别</li>
+      <li>1px细线分隔比厚重阴影更精炼、更"编辑级"</li>
+      <li>大量留白让界面呼吸感强，不压抑</li>
+      <li>完全基于现有 Tailwind + CSS 变量架构，无需改配置</li>
+    </ul>
+  </div>
+  <div class="cons">
+    <h4>需要注意</h4>
+    <ul>
+      <li>暗色侧栏需要适配亮/暗两种整体模式</li>
+      <li>1px边框在深色模式下需要调暗</li>
+      <li>Monaco 编辑器在深色模式下需确认主题一致</li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,118 @@
+<h2>RePoChat UI 重新设计 — 选择设计方向</h2>
+<p class="subtitle">请浏览以下三种设计风格，选择您最喜欢的。每种风格都会保留现有的布局结构（顶部导航 + 左侧边栏 + 右侧内容区）。</p>
+
+<div class="options">
+  <div class="option" data-choice="modern-saas" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>现代 SaaS 专业风</h3>
+      <p>深色侧边栏搭配亮色内容区，蓝色/靛蓝主色调，卡片式布局，微妙的阴影和圆角。类似 Linear、Vercel 的设计语言。专业、干净、高效。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="glassmorphism" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>玻璃态科技风</h3>
+      <p>毛玻璃效果、渐变背景、半透明卡片、柔和发光边框。现代感强，视觉层次丰富。适合展示 AI/技术主题。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="minimal-swiss" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>极简瑞士风格</h3>
+      <p>大量留白、清晰网格系统、无衬线字体、极简配色（黑白灰 + 单一强调色）。强调内容和可读性，减少视觉噪音。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>可视化预览</h3>
+  <p class="subtitle">以下是三种风格在 Dashboard 页面的快速 mockup 对比</p>
+</div>
+
+<div class="cards">
+  <div class="card" data-choice="modern-saas-card" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;height:280px;border-radius:8px;overflow:hidden;font-family:system-ui,sans-serif;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+        <div style="width:180px;background:#0f172a;color:#94a3b8;padding:16px 12px;display:flex;flex-direction:column;gap:6px">
+          <div style="color:#e2e8f0;font-weight:700;font-size:14px;margin-bottom:12px">RePoChat</div>
+          <div style="background:#1e3a5f;color:#60a5fa;padding:8px 10px;border-radius:6px;font-weight:600">概览</div>
+          <div style="padding:8px 10px;border-radius:6px">项目</div>
+          <div style="padding:8px 10px;border-radius:6px">GitHub推荐</div>
+          <div style="padding:8px 10px;border-radius:6px">GitHub设置</div>
+          <div style="padding:8px 10px;border-radius:6px">AI设置</div>
+          <div style="padding:8px 10px;border-radius:6px">MCP设置</div>
+        </div>
+        <div style="flex:1;background:#f8fafc;padding:24px">
+          <div style="font-size:20px;font-weight:700;color:#0f172a;margin-bottom:4px">Dashboard</div>
+          <div style="color:#64748b;margin-bottom:20px">Welcome to RePoChat</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px">
+            <div style="flex:1;background:#fff;padding:16px;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06)"><div style="color:#64748b;font-size:11px">Total Projects</div><div style="font-size:24px;font-weight:700;color:#0f172a">5</div></div>
+            <div style="flex:1;background:#fff;padding:16px;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06)"><div style="color:#64748b;font-size:11px">Active Repos</div><div style="font-size:24px;font-weight:700;color:#0f172a">3</div></div>
+            <div style="flex:1;background:#fff;padding:16px;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06)"><div style="color:#64748b;font-size:11px">Last Updated</div><div style="font-size:24px;font-weight:700;color:#0f172a">Now</div></div>
+          </div>
+          <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.06)"><div style="font-weight:600;color:#0f172a;margin-bottom:12px">Recent Projects</div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9"><span style="color:#334155">my-project</span><span style="color:#94a3b8">main • 42 commits</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>方案 A：现代 SaaS 专业风</h3>
+      <p>深色侧栏 + 亮色内容，卡片阴影，蓝靛主色调</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="glass-card" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;height:280px;border-radius:8px;overflow:hidden;font-family:system-ui,sans-serif;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)">
+        <div style="width:180px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);color:rgba(255,255,255,0.85);padding:16px 12px;display:flex;flex-direction:column;gap:6px;border-right:1px solid rgba(255,255,255,0.15)">
+          <div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:12px">RePoChat</div>
+          <div style="background:rgba(255,255,255,0.2);color:#fff;padding:8px 10px;border-radius:8px;font-weight:600">概览</div>
+          <div style="padding:8px 10px;border-radius:8px">项目</div>
+          <div style="padding:8px 10px;border-radius:8px">GitHub推荐</div>
+          <div style="padding:8px 10px;border-radius:8px">设置</div>
+        </div>
+        <div style="flex:1;padding:24px;backdrop-filter:blur(5px)">
+          <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:4px">Dashboard</div>
+          <div style="color:rgba(255,255,255,0.7);margin-bottom:20px">Welcome to RePoChat</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px">
+            <div style="flex:1;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.2)"><div style="color:rgba(255,255,255,0.7);font-size:11px">Total Projects</div><div style="font-size:24px;font-weight:700;color:#fff">5</div></div>
+            <div style="flex:1;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.2)"><div style="color:rgba(255,255,255,0.7);font-size:11px">Active Repos</div><div style="font-size:24px;font-weight:700;color:#fff">3</div></div>
+            <div style="flex:1;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.2)"><div style="color:rgba(255,255,255,0.7);font-size:11px">Last Updated</div><div style="font-size:24px;font-weight:700;color:#fff">Now</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>方案 B：玻璃态科技风</h3>
+      <p>渐变背景 + 毛玻璃卡片 + 发光边框，科技感强</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="swiss-card" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;height:280px;border-radius:8px;overflow:hidden;font-family:system-ui,sans-serif;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid #e5e7eb">
+        <div style="width:180px;background:#fafafa;color:#525252;padding:16px 12px;display:flex;flex-direction:column;gap:2px;border-right:1px solid #e5e7eb">
+          <div style="color:#171717;font-weight:600;font-size:14px;margin-bottom:12px;letter-spacing:-0.02em">RePoChat</div>
+          <div style="background:#e5e7eb;color:#171717;padding:6px 10px;border-radius:4px;font-weight:500">概览</div>
+          <div style="padding:6px 10px;border-radius:4px">项目</div>
+          <div style="padding:6px 10px;border-radius:4px">推荐</div>
+          <div style="padding:6px 10px;border-radius:4px">设置</div>
+        </div>
+        <div style="flex:1;background:#fff;padding:32px">
+          <div style="font-size:18px;font-weight:600;color:#171717;margin-bottom:2px;letter-spacing:-0.02em">Dashboard</div>
+          <div style="color:#737373;margin-bottom:32px;font-size:11px">Welcome to RePoChat</div>
+          <div style="display:flex;gap:24px;margin-bottom:32px">
+            <div><div style="color:#a3a3a3;font-size:10px;text-transform:uppercase;letter-spacing:0.05em">Projects</div><div style="font-size:28px;font-weight:600;color:#171717">5</div></div>
+            <div><div style="color:#a3a3a3;font-size:10px;text-transform:uppercase;letter-spacing:0.05em">Active</div><div style="font-size:28px;font-weight:600;color:#171717">3</div></div>
+            <div><div style="color:#a3a3a3;font-size:10px;text-transform:uppercase;letter-spacing:0.05em">Updated</div><div style="font-size:28px;font-weight:600;color:#171717">Now</div></div>
+          </div>
+          <div style="border-top:1px solid #e5e7eb;padding-top:20px"><div style="font-weight:500;color:#171717;margin-bottom:12px">Recent Projects</div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f5f5f5"><span style="color:#404040">my-project</span><span style="color:#a3a3a3">main</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>方案 C：极简瑞士风格</h3>
+      <p>大量留白、细线分隔、极简配色、强调信息层级</p>
+    </div>
+  </div>
+</div>

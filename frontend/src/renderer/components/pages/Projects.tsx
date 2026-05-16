@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-hot-toast'
 import { Link } from 'react-router-dom'
-import { FolderIcon, PlusIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
+import { FolderIcon, PlusIcon, ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { api } from '../../services/api'
 
 interface Project {
@@ -28,7 +28,7 @@ export const Projects: React.FC = () => {
   })
 
   const cloneMutation = useMutation({
-    mutationFn: ({ url, path }: { url: string; path?: string }) => 
+    mutationFn: ({ url, path }: { url: string; path?: string }) =>
       api.cloneRepository(url, path),
     onSuccess: () => {
       toast.success('仓库克隆成功！')
@@ -52,121 +52,136 @@ export const Projects: React.FC = () => {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-8">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">项目</h1>
-          <p className="mt-1 text-gray-600">管理您的Git仓库</p>
+          <p className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider mb-1">
+            Repository Management
+          </p>
+          <h1 className="text-[26px] font-bold text-[#1e1b4b] tracking-tight">
+            Projects
+          </h1>
         </div>
-        
+
         <button
           onClick={() => setShowCloneModal(true)}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className="btn-primary gap-1.5 text-[13px]"
         >
-          <PlusIcon className="h-4 w-4 mr-2" />
-          克隆仓库
+          <PlusIcon className="h-4 w-4" />
+          Clone Repository
         </button>
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <ArrowPathIcon className="h-8 w-8 animate-spin text-blue-600" />
+        <div className="flex flex-col items-center justify-center h-64 gap-3">
+          <ArrowPathIcon className="h-8 w-8 animate-spin text-indigo-400" />
+          <p className="text-sm text-gray-400">Loading...</p>
         </div>
       ) : projects.length === 0 ? (
-        <div className="text-center py-12">
-          <FolderIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">暂无项目</h3>
-          <p className="text-gray-500 mb-4">通过克隆仓库开始使用</p>
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center">
+            <FolderIcon className="h-8 w-8 text-gray-300" />
+          </div>
+          <h3 className="text-base font-semibold text-[#1e1b4b]">No Projects</h3>
+          <p className="text-sm text-gray-400">Clone a repository to get started</p>
           <button
             onClick={() => setShowCloneModal(true)}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="btn-primary gap-1.5 text-[13px] mt-2"
           >
-            <PlusIcon className="h-4 w-4 mr-2" />
-            克隆仓库
+            <PlusIcon className="h-4 w-4" />
+            Clone Repository
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((project: Project) => (
-            <div key={project.path} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
-              <div className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+            <div key={project.path} className="glass-card overflow-hidden">
+              <div className="p-5">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-[15px] font-semibold text-[#1e1b4b] mb-1 truncate">
                       {project.name}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-2">{project.path}</p>
-                    <div className="space-y-1 text-sm text-gray-500">
-                      <p>分支: {project.current_branch}</p>
-                      <p>提交数: {project.commits_count}</p>
-                      <p>最后更新: {project.last_commit?.date ? new Date(project.last_commit.date).toLocaleDateString() : 'N/A'}</p>
-                    </div>
+                    <p className="text-xs text-gray-400 truncate">{project.path}</p>
                   </div>
-                  <FolderIcon className="h-8 w-8 text-blue-500 flex-shrink-0" />
+                  <div className="w-9 h-9 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0 ml-3 shadow-sm shadow-indigo-500/20">
+                    <FolderIcon className="h-4 w-4 text-white" />
+                  </div>
                 </div>
-                
-                <div className="mt-4 flex space-x-2">
-                  <Link
-                    to={`/projects/${encodeURIComponent(project.path)}`}
-                    className="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
-                  >
-                    查看详情
-                  </Link>
+
+                <div className="flex items-center gap-3 text-xs text-gray-400 mb-4">
+                  <span className="badge badge-indigo">{project.current_branch}</span>
+                  <span>{project.commits_count} commits</span>
+                  <span>{project.last_commit?.date ? new Date(project.last_commit.date).toLocaleDateString() : 'N/A'}</span>
                 </div>
+
+                <Link
+                  to={`/projects/${encodeURIComponent(project.path)}`}
+                  className="btn-primary w-full justify-center text-[13px]"
+                >
+                  View Details
+                </Link>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* 克隆模态框 */}
+      {/* Clone modal */}
       {showCloneModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-semibold mb-4">克隆仓库</h2>
-            
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="glass-card-static w-full max-w-md p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-bold text-[#1e1b4b] tracking-tight">Clone Repository</h2>
+              <button onClick={() => setShowCloneModal(false)} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            </div>
+
             <form onSubmit={handleClone}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  仓库URL
-                </label>
-                <input
-                  type="url"
-                  value={cloneUrl}
-                  onChange={(e) => setCloneUrl(e.target.value)}
-                  placeholder="https://github.com/user/repo.git"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                    Repository URL
+                  </label>
+                  <input
+                    type="url"
+                    value={cloneUrl}
+                    onChange={(e) => setCloneUrl(e.target.value)}
+                    placeholder="https://github.com/user/repo.git"
+                    className="input-field"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                    Local Path (optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={clonePath}
+                    onChange={(e) => setClonePath(e.target.value)}
+                    placeholder="/path/to/clone"
+                    className="input-field"
+                  />
+                </div>
               </div>
-              
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  本地路径（可选）
-                </label>
-                <input
-                  type="text"
-                  value={clonePath}
-                  onChange={(e) => setClonePath(e.target.value)}
-                  placeholder="/path/to/clone"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              
-              <div className="flex space-x-3">
+
+              <div className="flex gap-3 mt-6">
                 <button
                   type="submit"
                   disabled={cloneMutation.isPending}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                  className="btn-primary flex-1 justify-center text-[13px] disabled:opacity-50"
                 >
-                  {cloneMutation.isPending ? '克隆中...' : '克隆'}
+                  {cloneMutation.isPending ? 'Cloning...' : 'Clone'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowCloneModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                  className="btn-secondary flex-1 justify-center text-[13px]"
                 >
-                  取消
+                  Cancel
                 </button>
               </div>
             </form>

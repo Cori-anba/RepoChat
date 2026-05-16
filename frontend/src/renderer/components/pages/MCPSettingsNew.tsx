@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-hot-toast'
-import { PlusIcon, TrashIcon, CogIcon, PlayIcon, DocumentDuplicateIcon, ClipboardDocumentIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, TrashIcon, CogIcon, PlayIcon, ClipboardDocumentIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Switch } from '@headlessui/react'
 import { api } from '../../services/api'
 
@@ -109,17 +109,14 @@ export const MCPSettingsNew: React.FC = () => {
     }
   }
 
-  // 从剪贴板导入MCP服务器配置
   const handleImportFromClipboard = async () => {
     try {
       const clipboardText = await navigator.clipboard.readText()
       const json = JSON.parse(clipboardText)
-      
+
       let serversToImport = []
 
-      // 检查是否为Chatbox格式 (包含mcpServers键)
       if (json.mcpServers && typeof json.mcpServers === 'object') {
-        // Chatbox格式: {"mcpServers": {"server-name": {config}}}
         for (const [serverName, config] of Object.entries(json.mcpServers)) {
           if (typeof config === 'object' && config !== null) {
             serversToImport.push({
@@ -129,7 +126,6 @@ export const MCPSettingsNew: React.FC = () => {
           }
         }
       } else if (json.name && json.command) {
-        // 简单格式: {"name": "server-name", "command": "cmd", ...}
         serversToImport.push(json)
       } else {
         toast.error('剪贴板中的配置格式不正确，缺少必要字段')
@@ -141,7 +137,6 @@ export const MCPSettingsNew: React.FC = () => {
         return
       }
 
-      // 导入所有找到的服务器
       for (const config of serversToImport) {
         addMutation.mutate({
           name: config.name,
@@ -169,20 +164,24 @@ export const MCPSettingsNew: React.FC = () => {
   }))
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-8">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">MCP服务器设置</h1>
-          <p className="mt-1 text-gray-600">管理MCP服务器和工具配置</p>
+          <p className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider mb-1">
+            Configuration
+          </p>
+          <h1 className="text-[26px] font-bold text-[#1e1b4b] tracking-tight">
+            MCP Server Settings
+          </h1>
         </div>
-        
-        <div className="flex space-x-3">
+
+        <div className="flex gap-2">
           <button
             onClick={handleImportFromClipboard}
-            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-medium rounded-xl bg-white/60 backdrop-blur-sm border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-all duration-200"
           >
-            <ClipboardDocumentIcon className="h-4 w-4 mr-2" />
-            一键导入
+            <ClipboardDocumentIcon className="h-4 w-4" />
+            Import
           </button>
           <button
             onClick={() => {
@@ -199,22 +198,24 @@ export const MCPSettingsNew: React.FC = () => {
               })
               setShowModal(true)
             }}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="btn-primary gap-1.5 text-[13px]"
           >
-            <PlusIcon className="h-4 w-4 mr-2" />
-            手动配置
+            <PlusIcon className="h-4 w-4" />
+            Manual Config
           </button>
         </div>
       </div>
 
-      {/* 服务器列表 */}
+      {/* Server list */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">MCP 服务器</h2>
+        <h2 className="text-sm font-semibold text-[#1e1b4b] mb-4">MCP Servers</h2>
         {serverList.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-lg">
-            <CogIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">暂无MCP服务器</p>
-            <p className="text-sm text-gray-400 mt-1">点击上方按钮添加或导入服务器</p>
+          <div className="flex flex-col items-center justify-center py-16 gap-3">
+            <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center">
+              <CogIcon className="h-7 w-7 text-gray-300" />
+            </div>
+            <p className="text-sm text-gray-400">No MCP servers configured</p>
+            <p className="text-xs text-gray-300">Click the buttons above to add or import servers</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -236,7 +237,7 @@ export const MCPSettingsNew: React.FC = () => {
         )}
       </div>
 
-      {/* 添加/编辑服务器模态框 */}
+      {/* Add/Edit modal */}
       {showModal && currentServer && (
         <ServerConfigModal
           server={currentServer}
@@ -259,7 +260,7 @@ export const MCPSettingsNew: React.FC = () => {
   )
 }
 
-// 服务器卡片组件
+// Server Card component
 const ServerCard: React.FC<{
   server: MCPServer
   onEdit: () => void
@@ -269,76 +270,77 @@ const ServerCard: React.FC<{
   isBuiltin: boolean
 }> = ({ server, onEdit, onTest, onRemove, onToggle }) => {
   return (
-    <div className="bg-white rounded-lg shadow border border-gray-200 p-4">
+    <div className="glass-card p-5">
       <div className="flex items-start justify-between mb-3">
-        <div className="flex-1">
-          <h3 className="font-semibold text-gray-900 flex items-center">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-[15px] font-semibold text-[#1e1b4b] truncate">
             {server.name}
           </h3>
           {server.description && (
-            <p className="text-sm text-gray-600 mt-1">{server.description}</p>
+            <p className="text-xs text-gray-400 mt-1 line-clamp-2">{server.description}</p>
           )}
         </div>
-        <div className="flex items-center space-x-2">
-          {/* 开关组件 */}
+        <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
           <Switch
             checked={server.enabled !== false}
             onChange={onToggle}
             className={`${
-              server.enabled !== false ? 'bg-blue-600' : 'bg-gray-200'
-            } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+              server.enabled !== false ? 'bg-indigo-500' : 'bg-gray-200'
+            } relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400/40`}
           >
             <span
               className={`${
-                server.enabled !== false ? 'translate-x-6' : 'translate-x-1'
-              } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                server.enabled !== false ? 'translate-x-[18px]' : 'translate-x-[2px]'
+              } inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform duration-200 shadow-sm`}
             />
           </Switch>
           <button
             onClick={onRemove}
-            className="p-1 text-red-600 hover:bg-red-50 rounded-md"
+            className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
           >
-            <TrashIcon className="h-4 w-4" />
+            <TrashIcon className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
 
-      <div className="space-y-2 text-sm text-gray-600 mb-4">
-        <div>
-          <span className="font-medium">类型:</span> {server.transportType || 'stdio'}
+      <div className="space-y-1.5 text-xs text-gray-400 mb-4">
+        <div className="flex items-center gap-1.5">
+          <span className="font-medium text-gray-500">Type:</span> {server.transportType || 'stdio'}
         </div>
-        <div>
-          <span className="font-medium">命令:</span> {server.command}
+        <div className="flex items-center gap-1.5">
+          <span className="font-medium text-gray-500">Command:</span>
+          <span className="truncate">{server.command}</span>
         </div>
         {server.args && server.args.length > 0 && (
-          <div>
-            <span className="font-medium">参数:</span> {server.args.join(' ')}
+          <div className="flex items-center gap-1.5">
+            <span className="font-medium text-gray-500">Args:</span>
+            <span className="truncate">{server.args.join(' ')}</span>
           </div>
         )}
       </div>
 
-      <div className="flex space-x-2">
+      <div className="flex gap-2">
         <button
           onClick={onTest}
           disabled={server.enabled === false}
-          className="flex-1 px-3 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 text-xs font-medium rounded-lg bg-white/60 border border-emerald-200 text-emerald-600 hover:bg-emerald-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          <PlayIcon className="h-3 w-3 mr-1" />
-          测试
+          <PlayIcon className="h-3 w-3" />
+          Test
         </button>
         <button
           onClick={onEdit}
-          className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 flex items-center justify-center"
+          className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 text-xs font-semibold text-white rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 transition-all shadow-sm shadow-indigo-500/20"
         >
-          <CogIcon className="h-3 w-3 mr-1" />
-          编辑
+          <CogIcon className="h-3 w-3" />
+          Edit
         </button>
       </div>
     </div>
   )
 }
 
-// 环境变量工具函数
+// Env utils
 const envUtils = {
   parse: (env: string): Record<string, string> => {
     const lines = env.split('\n')
@@ -361,7 +363,7 @@ const envUtils = {
   },
 }
 
-// 服务器配置模态框组件
+// Server config modal
 const ServerConfigModal: React.FC<{
   server: MCPServer
   onSave: (server: MCPServer) => void
@@ -374,180 +376,175 @@ const ServerConfigModal: React.FC<{
     env: server.env || {},
     headers: server.headers || {}
   })
-  
-  // 将环境变量转换为字符串格式用于编辑
+
   const [envString, setEnvString] = useState(envUtils.stringify(server.env || {}))
   const [headersString, setHeadersString] = useState(envUtils.stringify(server.headers || {}))
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // 在保存前将字符串格式的环境变量和头信息转换回对象格式
+
     const serverToSave = {
       ...formData,
       env: envUtils.parse(envString),
       headers: envUtils.parse(headersString)
     }
-    
+
     onSave(serverToSave)
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-semibold mb-4">
-          {server.name ? '编辑MCP服务器' : '添加MCP服务器'}
-        </h2>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="glass-card-static w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-bold text-[#1e1b4b] tracking-tight">
+            {server.name ? 'Edit MCP Server' : 'Add MCP Server'}
+          </h2>
+          <button onClick={onClose} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+            <XMarkIcon className="h-5 w-5" />
+          </button>
+        </div>
 
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  服务器名称 *
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                  Server Name *
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  传输类型
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                  Transport Type
                 </label>
                 <select
                   value={formData.transportType || 'stdio'}
                   onChange={(e) => setFormData({ ...formData, transportType: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                 >
-                  <option value="stdio">标准输入输出 (stdio)</option>
+                  <option value="stdio">Standard I/O (stdio)</option>
                   <option value="http">HTTP</option>
                 </select>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                命令 *
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                Command *
               </label>
               <input
                 type="text"
                 value={formData.command}
                 onChange={(e) => setFormData({ ...formData, command: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-field"
                 required
                 placeholder="python -m app.core.comment_mcp_server"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                参数（空格分隔）
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                Arguments (space-separated)
               </label>
               <input
                 type="text"
                 value={formData.args?.join(' ') || ''}
-                onChange={(e) => setFormData({ 
-                  ...formData, 
+                onChange={(e) => setFormData({
+                  ...formData,
                   args: e.target.value.split(' ').filter(arg => arg.trim())
                 })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input-field"
                 placeholder="-m app.core.comment_mcp_server"
               />
             </div>
 
             {formData.transportType === 'http' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
                   URL *
                 </label>
                 <input
                   type="url"
                   value={formData.url || ''}
                   onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   placeholder="https://api.example.com/mcp"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                描述
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                Description
               </label>
               <input
                 type="text"
                 value={formData.description || ''}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="MCP服务器描述"
+                className="input-field"
+                placeholder="MCP server description"
               />
             </div>
 
-            {/* 环境变量编辑区域 - 仅对stdio类型显示 */}
             {formData.transportType === 'stdio' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  环境变量 (KEY=VALUE格式，每行一个)
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                  Environment Variables (KEY=VALUE, one per line)
                 </label>
                 <textarea
                   value={envString}
                   onChange={(e) => setEnvString(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   rows={4}
-                  placeholder="MCP_MODE=stdio&#10;LOG_LEVEL=error&#10;DISABLE_CONSOLE_OUTPUT=true"
+                  placeholder={"MCP_MODE=stdio\nLOG_LEVEL=error\nDISABLE_CONSOLE_OUTPUT=true"}
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  格式: KEY=VALUE，每行一个环境变量
-                </p>
               </div>
             )}
 
-            {/* HTTP头信息编辑区域 - 仅对http类型显示 */}
             {formData.transportType === 'http' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  HTTP头信息 (NAME=VALUE格式，每行一个)
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                  HTTP Headers (NAME=VALUE, one per line)
                 </label>
                 <textarea
                   value={headersString}
                   onChange={(e) => setHeadersString(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input-field"
                   rows={4}
-                  placeholder="Authorization=Bearer token&#10;Content-Type=application/json"
+                  placeholder={"Authorization=Bearer token\nContent-Type=application/json"}
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  格式: NAME=VALUE，每行一个HTTP头
-                </p>
               </div>
             )}
           </div>
 
-          <div className="flex justify-end space-x-3 mt-6">
+          <div className="flex justify-end gap-3 mt-6">
             <button
               type="button"
               onClick={() => onTest(formData)}
               disabled={isTesting}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium rounded-xl bg-white/60 border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-colors disabled:opacity-40"
             >
-              {isTesting ? '测试中...' : '测试连接'}
+              {isTesting ? 'Testing...' : 'Test Connection'}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+              className="btn-secondary text-[13px]"
             >
-              取消
+              Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              className="btn-primary text-[13px]"
             >
-              保存
+              Save
             </button>
           </div>
         </form>

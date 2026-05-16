@@ -16,17 +16,16 @@ export const GitHubSettings: React.FC = () => {
   const { data: config, isLoading: isLoadingConfig } = useQuery<GitHubConfig>({
     queryKey: ['github-config'],
     queryFn: () => api.getGitHubConfig(),
-    enabled: false // 手动触发
+    enabled: false
   })
 
   const { data: status, refetch: refetchStatus } = useQuery({
     queryKey: ['github-status'],
     queryFn: () => api.getGitHubStatus(),
-    enabled: false // 手动触发
+    enabled: false
   })
 
   useEffect(() => {
-    // 加载配置和状态
     queryClient.fetchQuery({ queryKey: ['github-config'] })
     queryClient.fetchQuery({ queryKey: ['github-status'] })
   }, [queryClient])
@@ -58,7 +57,6 @@ export const GitHubSettings: React.FC = () => {
     onSuccess: (result) => {
       if (result.success) {
         toast.success('配置保存成功！')
-        // 重新加载状态
         queryClient.invalidateQueries({ queryKey: ['github-status'] })
         queryClient.invalidateQueries({ queryKey: ['github-config'] })
       } else {
@@ -95,91 +93,93 @@ export const GitHubSettings: React.FC = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">GitHub设置</h1>
-        <p className="mt-2 text-gray-600">配置GitHub API访问权限</p>
+        <p className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider mb-1">
+          Configuration
+        </p>
+        <h1 className="text-[26px] font-bold text-[#1e1b4b] tracking-tight">
+          GitHub Settings
+        </h1>
       </div>
 
-      <div className="max-w-2xl">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">GitHub配置</h2>
-          
+      <div className="max-w-2xl space-y-6">
+        {/* Main config */}
+        <div className="glass-card-static p-6">
+          <h2 className="text-sm font-semibold text-[#1e1b4b] mb-5">GitHub Configuration</h2>
+
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                GitHub Personal Access Token
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                Personal Access Token
               </label>
               <input
                 type="password"
                 value={accessToken}
                 onChange={(e) => setAccessToken(e.target.value)}
-                placeholder="输入您的GitHub Personal Access Token"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter your GitHub Personal Access Token"
+                className="input-field"
               />
-              <p className="mt-1 text-sm text-gray-500">
-                需要获取GitHub API访问权限。请前往GitHub设置创建Personal Access Token。
+              <p className="mt-1.5 text-xs text-gray-400">
+                Go to GitHub Settings to create a Personal Access Token.
               </p>
             </div>
 
-            <div className="flex space-x-3 pt-4">
+            <div className="flex gap-3 pt-2">
               <button
                 onClick={handleTestConnection}
                 disabled={isTesting || !accessToken.trim()}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                className="inline-flex items-center px-4 py-2.5 text-sm font-medium rounded-xl bg-white/60 backdrop-blur-sm border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {isTesting ? '测试中...' : '测试连接'}
+                {isTesting ? 'Testing...' : 'Test Connection'}
               </button>
               <button
                 onClick={handleSave}
                 disabled={saveConfigMutation.isPending || !accessToken.trim()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="btn-primary text-[13px] disabled:opacity-50"
               >
-                {saveConfigMutation.isPending ? '保存中...' : '保存设置'}
+                {saveConfigMutation.isPending ? 'Saving...' : 'Save Settings'}
               </button>
               <button
                 onClick={handleClear}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                className="btn-secondary text-[13px]"
               >
-                清空
+                Clear
               </button>
             </div>
           </div>
         </div>
 
-        <div className="mt-6 bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">当前状态</h2>
-          
+        {/* Status card */}
+        <div className="glass-card-static p-6">
+          <h2 className="text-sm font-semibold text-[#1e1b4b] mb-4">Current Status</h2>
+
           {isLoadingConfig ? (
-            <div className="text-center py-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-gray-500">加载中...</p>
+            <div className="flex items-center justify-center py-6 gap-3">
+              <div className="w-5 h-5 border-2 border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
+              <span className="text-sm text-gray-400">Loading...</span>
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">配置状态:</span>
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  status?.configured 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {status?.configured ? '已配置' : '未配置'}
+              <div className="flex items-center justify-between py-2">
+                <span className="text-sm font-medium text-gray-600">Config Status</span>
+                <span className={`badge ${status?.configured ? 'badge-green' : 'badge-pink'}`}>
+                  {status?.configured ? 'Configured' : 'Not Configured'}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">热门项目缓存:</span>
-                <span className="text-sm text-gray-600">
-                  {status?.trending_count || 0} 个项目
+              <div className="flex items-center justify-between py-2">
+                <span className="text-sm font-medium text-gray-600">Trending Cache</span>
+                <span className="text-sm text-gray-400">
+                  {status?.trending_count || 0} repos
                 </span>
               </div>
 
               {status?.configured && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">Access Token:</span>
-                  <span className="text-sm text-gray-600 truncate max-w-xs">
-                    {status.access_token ? '••••••••' + status.access_token.slice(-4) : '无'}
+                <div className="flex items-center justify-between py-2">
+                  <span className="text-sm font-medium text-gray-600">Access Token</span>
+                  <span className="text-sm text-gray-400 truncate max-w-xs">
+                    {status.access_token ? '••••••••' + status.access_token.slice(-4) : 'None'}
                   </span>
                 </div>
               )}
@@ -187,14 +187,15 @@ export const GitHubSettings: React.FC = () => {
           )}
         </div>
 
-        <div className="mt-6 bg-blue-50 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-blue-900 mb-2">使用说明</h3>
-          <div className="space-y-2 text-sm text-blue-800">
-            <p>1. 前往 <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer" className="underline">GitHub设置页面</a> 创建Personal Access Token</p>
-            <p>2. 选择适当的权限范围（建议勾选repo权限）</p>
-            <p>3. 复制生成的token并粘贴到上方输入框</p>
-            <p>4. 点击"测试连接"验证token有效性</p>
-            <p>5. 点击"保存设置"保存配置</p>
+        {/* Instructions card */}
+        <div className="glass-card-static p-5">
+          <h3 className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-3">Instructions</h3>
+          <div className="space-y-2 text-sm text-gray-500">
+            <p>1. Go to <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:text-indigo-600 underline">GitHub Settings</a> to create a Personal Access Token</p>
+            <p>2. Select appropriate permissions (recommended: repo scope)</p>
+            <p>3. Copy the generated token and paste it above</p>
+            <p>4. Click "Test Connection" to verify</p>
+            <p>5. Click "Save Settings" to persist</p>
           </div>
         </div>
       </div>

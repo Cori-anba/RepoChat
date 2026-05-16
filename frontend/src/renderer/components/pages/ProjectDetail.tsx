@@ -62,12 +62,10 @@ export const ProjectDetail: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [fileContent, setFileContent] = useState<string | null>(null);
   const [isLoadingFile, setIsLoadingFile] = useState(false);
-  // 添加展开文件夹状态
   const [expandedFolders, setExpandedFolders] = useState<
     Record<string, boolean>
   >({});
 
-  // 更新项目状态
   const [isUpdating, setIsUpdating] = useState(false);
   const [previewFile, setPreviewFile] = useState<{
     path: string;
@@ -82,7 +80,6 @@ export const ProjectDetail: React.FC = () => {
     enabled: !!decodedPath,
   });
 
-  // 初始化时展开一级文件夹
   useEffect(() => {
     if (
       project?.file_tree &&
@@ -134,7 +131,6 @@ export const ProjectDetail: React.FC = () => {
   const handleFileClick = async (filePath: string) => {
     setIsLoadingFile(true);
     try {
-      // 清理文件路径：移除项目根目录前缀
       const cleanFilePath = filePath.replace(/^[^\/]+\//, "");
 
       console.log("原始文件路径:", filePath);
@@ -151,7 +147,6 @@ export const ProjectDetail: React.FC = () => {
     }
   };
 
-  // 添加处理文件夹点击的函数
   const handleFolderClick = (folderPath: string) => {
     setExpandedFolders((prev) => ({
       ...prev,
@@ -159,7 +154,6 @@ export const ProjectDetail: React.FC = () => {
     }));
   };
 
-  // 更新仓库
   const handleUpdateRepository = async () => {
     setIsUpdating(true);
     try {
@@ -168,7 +162,6 @@ export const ProjectDetail: React.FC = () => {
       if (result.success) {
         toast.success("仓库更新成功");
 
-        // 更新成功后自动刷新页面数据
         setTimeout(() => {
           queryClient.invalidateQueries({ queryKey: ["project", decodedPath] });
         }, 1000);
@@ -183,16 +176,13 @@ export const ProjectDetail: React.FC = () => {
     }
   };
 
-  // 处理文件预览
   const handleFilePreview = (filePath: string, content: string) => {
     setPreviewFile({ path: filePath, content });
   };
 
-  // 文件搜索状态
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<string[]>([]);
 
-  // 搜索文件
   const searchFiles = (
     node: FileTreeNode,
     term: string,
@@ -203,12 +193,10 @@ export const ProjectDetail: React.FC = () => {
     const results: string[] = [];
     const fullPath = currentPath ? `${currentPath}/${node.name}` : node.name;
 
-    // 检查当前节点是否匹配
     if (node.name.toLowerCase().includes(term.toLowerCase())) {
       results.push(fullPath);
     }
 
-    // 递归搜索子节点
     if (node.type === "directory" && node.children) {
       for (const child of node.children) {
         results.push(...searchFiles(child, term, fullPath));
@@ -218,7 +206,6 @@ export const ProjectDetail: React.FC = () => {
     return results;
   };
 
-  // 处理搜索输入变化
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
     if (project?.file_tree) {
@@ -227,12 +214,10 @@ export const ProjectDetail: React.FC = () => {
     }
   };
 
-  // 关闭文件预览
   const handleClosePreview = () => {
     setPreviewFile(null);
   };
 
-  // 优化后的文件树渲染函数
   const renderFileTree = (node: FileTreeNode, level = 0, currentPath = "") => {
     const indent = level * 16;
     const fullPath = currentPath ? `${currentPath}/${node.name}` : node.name;
@@ -242,16 +227,16 @@ export const ProjectDetail: React.FC = () => {
       return (
         <div
           key={fullPath}
-          className={`flex items-center py-2 px-3 rounded cursor-pointer transition-colors ${
+          className={`flex items-center py-1.5 px-2 rounded-lg cursor-pointer transition-all duration-150 ${
             selectedFile === fullPath
-              ? "bg-blue-100 border-l-4 border-blue-500"
-              : "hover:bg-gray-100"
+              ? "bg-indigo-50 text-indigo-700 border-l-[3px] border-indigo-500"
+              : "hover:bg-gray-50 text-gray-600"
           }`}
           style={{ paddingLeft: indent + 8 }}
           onClick={() => handleFileClick(fullPath)}
         >
-          <DocumentTextIcon className="h-4 w-4 mr-2 text-blue-600" />
-          <span className="text-sm text-gray-800 truncate">{node.name}</span>
+          <DocumentTextIcon className="h-3.5 w-3.5 mr-2 text-indigo-400 flex-shrink-0" />
+          <span className="text-xs truncate">{node.name}</span>
         </div>
       );
     }
@@ -259,22 +244,22 @@ export const ProjectDetail: React.FC = () => {
     return (
       <div key={fullPath}>
         <div
-          className={`flex items-center py-2 px-3 rounded cursor-pointer transition-colors ${
-            isExpanded ? "bg-gray-100" : "hover:bg-gray-100"
-          }`}
+          className={`flex items-center py-1.5 px-2 rounded-lg cursor-pointer transition-all duration-150 ${
+            isExpanded ? "bg-gray-50" : "hover:bg-gray-50"
+          } text-gray-700`}
           style={{ paddingLeft: indent + 8 }}
           onClick={() => handleFolderClick(fullPath)}
         >
           {isExpanded ? (
-            <ChevronDownIcon className="h-4 w-4 mr-2 text-gray-600" />
+            <ChevronDownIcon className="h-3.5 w-3.5 mr-2 text-gray-400 flex-shrink-0" />
           ) : (
-            <ChevronRightIcon className="h-4 w-4 mr-2 text-gray-600" />
+            <ChevronRightIcon className="h-3.5 w-3.5 mr-2 text-gray-400 flex-shrink-0" />
           )}
-          <FolderIcon className="h-4 w-4 mr-2 text-yellow-600" />
-          <span className="text-sm text-gray-800 truncate">{node.name}</span>
+          <FolderIcon className="h-3.5 w-3.5 mr-2 text-amber-400 flex-shrink-0" />
+          <span className="text-xs font-medium truncate">{node.name}</span>
         </div>
         {isExpanded && (
-          <div className="ml-2 border-l border-gray-200 pl-2">
+          <div className="ml-2 border-l border-gray-100 pl-2">
             {node.children?.map((child) =>
               renderFileTree(child, level + 1, fullPath)
             )}
@@ -286,9 +271,10 @@ export const ProjectDetail: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="p-6">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="p-8">
+        <div className="flex flex-col items-center justify-center h-64 gap-3">
+          <div className="w-10 h-10 border-[3px] border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
+          <p className="text-sm text-gray-400">Loading...</p>
         </div>
       </div>
     );
@@ -296,9 +282,9 @@ export const ProjectDetail: React.FC = () => {
 
   if (!project) {
     return (
-      <div className="p-6">
-        <div className="text-center py-12">
-          <p className="text-gray-500">项目未找到</p>
+      <div className="p-8">
+        <div className="flex flex-col items-center justify-center py-20 gap-3">
+          <p className="text-sm text-gray-400">Project not found</p>
         </div>
       </div>
     );
@@ -306,7 +292,7 @@ export const ProjectDetail: React.FC = () => {
 
   if (selectedFile && fileContent) {
     return (
-      <div className="p-6">
+      <div className="p-8">
         <FileViewer
           fileName={selectedFile.split("/").pop() || ""}
           fileContent={fileContent}
@@ -321,16 +307,15 @@ export const ProjectDetail: React.FC = () => {
     );
   }
 
-  // 文件预览模式
   if (previewFile) {
     return (
-      <div className="p-6">
+      <div className="p-8">
         <div className="mb-4">
           <button
             onClick={handleClosePreview}
-            className="text-blue-600 hover:text-blue-800 text-sm"
+            className="text-indigo-500 hover:text-indigo-700 text-sm font-medium transition-colors"
           >
-            ← 返回智能对话
+            ← Back to AI Chat
           </button>
         </div>
         <FileViewer
@@ -345,54 +330,55 @@ export const ProjectDetail: React.FC = () => {
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-8 bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-center mb-4 lg:mb-0">
-              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
-                <FolderIcon className="h-6 w-6 text-white" />
+    <div className="p-8">
+      {/* Hero banner */}
+      <div className="glass-card-static overflow-hidden mb-6">
+        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-6 py-5">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                <FolderIcon className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">
+                <h1 className="text-xl font-bold text-white tracking-tight">
                   {project.info?.name}
                 </h1>
-                <p className="text-blue-100 text-sm">{project.info?.path}</p>
+                <p className="text-white/70 text-xs">{project.info?.path}</p>
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <button
                 onClick={handleUpdateRepository}
                 disabled={isUpdating}
-                className="flex items-center px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow hover:shadow-lg border border-blue-200"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white/20 backdrop-blur-sm text-white text-[13px] font-medium rounded-xl hover:bg-white/30 disabled:opacity-50 transition-all border border-white/20"
               >
                 {isUpdating ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-                    更新中...
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Updating...
                   </>
                 ) : (
                   <>
-                    <ArrowPathIcon className="h-4 w-4 mr-2" />
-                    更新仓库
+                    <ArrowPathIcon className="h-4 w-4" />
+                    Update
                   </>
                 )}
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 disabled={isDeleting}
-                className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow hover:shadow-lg border border-red-400"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white/15 backdrop-blur-sm text-white text-[13px] font-medium rounded-xl hover:bg-red-500/40 disabled:opacity-50 transition-all border border-white/15"
               >
                 {isDeleting ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    删除中...
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Deleting...
                   </>
                 ) : (
                   <>
-                    <TrashIcon className="h-4 w-4 mr-2" />
-                    删除项目
+                    <TrashIcon className="h-4 w-4" />
+                    Delete
                   </>
                 )}
               </button>
@@ -400,114 +386,104 @@ export const ProjectDetail: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
-              <div className="flex items-center mb-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-2">
-                  <FolderIcon className="h-4 w-4 text-white" />
+        <div className="p-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="bg-indigo-50/60 rounded-xl p-4 border border-indigo-100/50">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 bg-indigo-500 rounded-lg flex items-center justify-center">
+                  <FolderIcon className="h-3.5 w-3.5 text-white" />
                 </div>
-                <p className="text-sm font-medium text-blue-800">仓库名称</p>
+                <p className="text-[11px] font-semibold text-indigo-600 uppercase tracking-wider">Repository</p>
               </div>
-              <p className="text-lg font-bold text-blue-900 truncate">
-                {project.info?.name}
-              </p>
+              <p className="text-base font-bold text-indigo-900 truncate">{project.info?.name}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
-              <div className="flex items-center mb-2">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-2">
-                  <CodeBracketIcon className="h-4 w-4 text-white" />
+            <div className="bg-purple-50/60 rounded-xl p-4 border border-purple-100/50">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 bg-purple-500 rounded-lg flex items-center justify-center">
+                  <CodeBracketIcon className="h-3.5 w-3.5 text-white" />
                 </div>
-                <p className="text-sm font-medium text-green-800">当前分支</p>
+                <p className="text-[11px] font-semibold text-purple-600 uppercase tracking-wider">Branch</p>
               </div>
-              <p className="text-lg font-bold text-green-900">
-                {project.info?.current_branch}
-              </p>
+              <p className="text-base font-bold text-purple-900">{project.info?.current_branch}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
-              <div className="flex items-center mb-2">
-                <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mr-2">
-                  <CodeBracketIcon className="h-4 w-4 text-white" />
+            <div className="bg-pink-50/60 rounded-xl p-4 border border-pink-100/50">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 bg-pink-500 rounded-lg flex items-center justify-center">
+                  <CodeBracketIcon className="h-3.5 w-3.5 text-white" />
                 </div>
-                <p className="text-sm font-medium text-purple-800">提交数量</p>
+                <p className="text-[11px] font-semibold text-pink-600 uppercase tracking-wider">Commits</p>
               </div>
-              <p className="text-lg font-bold text-purple-900">
-                {project.info?.commits_count}
-              </p>
+              <p className="text-base font-bold text-pink-900">{project.info?.commits_count}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4 border border-orange-200">
-              <div className="flex items-center mb-2">
-                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mr-2">
-                  <ArrowPathIcon className="h-4 w-4 text-white" />
+            <div className="bg-emerald-50/60 rounded-xl p-4 border border-emerald-100/50">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 bg-emerald-500 rounded-lg flex items-center justify-center">
+                  <ArrowPathIcon className="h-3.5 w-3.5 text-white" />
                 </div>
-                <p className="text-sm font-medium text-orange-800">远程仓库</p>
+                <p className="text-[11px] font-semibold text-emerald-600 uppercase tracking-wider">Remote</p>
               </div>
               <a
                 href={project.info?.remote_url || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-lg font-bold text-orange-900 hover:text-orange-700 hover:underline transition-colors duration-200 overflow-hidden whitespace-nowrap text-ellipsis block"
-                title={project.info?.remote_url || "无"}
+                className="text-base font-bold text-emerald-900 hover:text-emerald-700 hover:underline transition-colors truncate block"
+                title={project.info?.remote_url || "None"}
               >
-                {project.info?.remote_url || "无"}
+                {project.info?.remote_url || "None"}
               </a>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Delete confirmation modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4 border border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
-                <TrashIcon className="h-5 w-5 text-red-600" />
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="glass-card-static max-w-md w-full mx-4 p-6 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                <TrashIcon className="h-5 w-5 text-red-500" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  确认删除项目
-                </h3>
-                <p className="text-sm text-gray-500">此操作不可撤销</p>
+                <h3 className="text-base font-bold text-[#1e1b4b]">Confirm Delete</h3>
+                <p className="text-xs text-gray-400">This action cannot be undone</p>
               </div>
             </div>
 
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-              <p className="text-gray-700 mb-2">
-                确定要删除{" "}
-                <span className="font-semibold text-red-700">
-                  {project.info?.name}
-                </span>{" "}
-                吗？
+            <div className="bg-red-50/60 border border-red-100 rounded-xl p-4 mb-5">
+              <p className="text-sm text-gray-700 mb-2">
+                Are you sure you want to delete{" "}
+                <span className="font-semibold text-red-600">{project.info?.name}</span>?
               </p>
-              <div className="text-sm text-gray-600 space-y-1">
-                <p>• 数据库记录将被永久删除</p>
-                <p>• 本地文件夹将被删除</p>
-                <p>• 此操作不可撤销</p>
+              <div className="text-xs text-gray-500 space-y-1">
+                <p>• Database records will be permanently deleted</p>
+                <p>• Local folder will be removed</p>
+                <p>• This action is irreversible</p>
               </div>
             </div>
 
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                className="btn-secondary text-[13px]"
               >
-                取消
+                Cancel
               </button>
               <button
                 onClick={handleDeleteProject}
                 disabled={isDeleting}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors duration-200 flex items-center"
+                className="btn-danger text-[13px] disabled:opacity-50"
               >
                 {isDeleting ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    删除中...
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" />
+                    Deleting...
                   </>
                 ) : (
-                  "确认删除"
+                  "Confirm Delete"
                 )}
               </button>
             </div>
@@ -515,135 +491,87 @@ export const ProjectDetail: React.FC = () => {
         </div>
       )}
 
-      {/* 顶部：项目信息和快速操作 */}
-      <div className="mb-8">
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow p-6 border border-gray-100/50">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            {/* 项目基本信息 */}
-            <div className="flex-1">
-              <div className="flex items-center mb-3">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl mr-4">
-                  <FolderIcon className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                    {project?.info?.name || "加载中..."}
-                  </h1>
-                  <p className="text-sm text-gray-600 mt-1">{decodedPath}</p>
-                </div>
+      {/* Main content: 3-col layout */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        {/* Left column: file tree + commits + branches */}
+        <div className="xl:col-span-1 space-y-5">
+          {/* File tree */}
+          <div className="glass-card-static p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center shadow-sm shadow-emerald-500/20">
+                <DocumentTextIcon className="h-4 w-4 text-white" />
               </div>
-
-              <div className="flex flex-wrap gap-4 mt-4">
-                <div className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 rounded-xl border border-blue-200/50">
-                  <CodeBracketIcon className="h-4 w-4 text-blue-600 mr-2" />
-                  <span className="text-sm font-medium text-gray-700">
-                    {project?.info?.current_branch || "main"}
-                  </span>
-                </div>
-                <div className="flex items-center px-4 py-2 bg-gradient-to-r from-green-50/50 to-emerald-50/50 rounded-xl border border-green-200/50">
-                  <ArrowPathIcon className="h-4 w-4 text-green-600 mr-2" />
-                  <span className="text-sm font-medium text-gray-700">
-                    {project?.info?.commits_count || 0} 次提交
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 主要内容区域 */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* 左侧：项目核心信息 */}
-        <div className="xl:col-span-1 space-y-6">
-          {/* 文件结构 */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow hover:shadow-lg transition-all duration-300 p-5 border border-gray-100/50 hover:border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg mr-3">
-                <DocumentTextIcon className="h-5 w-5 text-white" />
-              </div>
-              <h2 className="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                文件结构
-              </h2>
+              <h2 className="text-sm font-bold text-[#1e1b4b]">Files</h2>
             </div>
 
-            {/* 文件搜索框 */}
-            <div className="mb-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="搜索文件..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                />
-                <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-              </div>
-
-              {/* 搜索结果 */}
-              {searchTerm && searchResults.length > 0 && (
-                <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-xs text-green-700 mb-1">
-                    找到 {searchResults.length} 个匹配文件:
-                  </p>
-                  <div className="space-y-1">
-                    {searchResults.slice(0, 5).map((result) => (
-                      <div
-                        key={result}
-                        className="px-2 py-1 text-sm text-green-800 hover:bg-green-100 rounded cursor-pointer transition-colors"
-                        onClick={() => handleFileClick(result)}
-                      >
-                        {result}
-                      </div>
-                    ))}
-                    {searchResults.length > 5 && (
-                      <p className="text-xs text-green-600 italic">
-                        还有 {searchResults.length - 5} 个文件...
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {searchTerm && searchResults.length === 0 && (
-                <div className="mt-2 p-2 bg-gray-50 border border-gray-200 rounded-lg">
-                  <p className="text-xs text-gray-600">未找到匹配的文件</p>
-                </div>
-              )}
+            <div className="mb-3 relative">
+              <input
+                type="text"
+                placeholder="Search files..."
+                value={searchTerm}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-gray-200 bg-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400 transition-all"
+              />
+              <MagnifyingGlassIcon className="absolute left-2.5 top-2 h-3.5 w-3.5 text-gray-400" />
             </div>
-            {isLoadingFile && (
-              <div className="flex justify-center items-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-                <span className="ml-3 text-gray-600">加载文件结构...</span>
+
+            {searchTerm && searchResults.length > 0 && (
+              <div className="mb-3 p-2 bg-emerald-50/60 border border-emerald-100 rounded-lg">
+                <p className="text-[10px] text-emerald-600 mb-1">Found {searchResults.length} matches:</p>
+                <div className="space-y-0.5">
+                  {searchResults.slice(0, 5).map((result) => (
+                    <div
+                      key={result}
+                      className="px-2 py-1 text-[11px] text-emerald-700 hover:bg-emerald-100 rounded cursor-pointer transition-colors truncate"
+                      onClick={() => handleFileClick(result)}
+                    >
+                      {result}
+                    </div>
+                  ))}
+                  {searchResults.length > 5 && (
+                    <p className="text-[10px] text-emerald-500">+ {searchResults.length - 5} more...</p>
+                  )}
+                </div>
               </div>
             )}
-            <div className="border border-gray-200 rounded-lg p-4 h-[calc(100vh-300px)] min-h-[400px] overflow-y-auto hover:border-gray-300 transition-colors">
+
+            {searchTerm && searchResults.length === 0 && (
+              <div className="mb-3 p-2 bg-gray-50 border border-gray-100 rounded-lg">
+                <p className="text-[10px] text-gray-400">No matching files</p>
+              </div>
+            )}
+
+            {isLoadingFile && (
+              <div className="flex items-center justify-center py-8 gap-2">
+                <div className="w-5 h-5 border-2 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
+                <span className="text-xs text-gray-400">Loading...</span>
+              </div>
+            )}
+            <div className="border border-gray-100 rounded-lg p-3 h-[calc(100vh-420px)] min-h-[300px] overflow-y-auto">
               {project?.file_tree && renderFileTree(project.file_tree)}
             </div>
           </div>
 
-          {/* 最近提交 */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow hover:shadow-lg transition-all duration-300 p-5 border border-gray-100/50 hover:border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg mr-3">
-                <ArrowPathIcon className="h-5 w-5 text-white" />
+          {/* Recent commits */}
+          <div className="glass-card-static p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg flex items-center justify-center shadow-sm shadow-blue-500/20">
+                <ArrowPathIcon className="h-4 w-4 text-white" />
               </div>
-              <h2 className="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                最近提交
-              </h2>
+              <h2 className="text-sm font-bold text-[#1e1b4b]">Recent Commits</h2>
             </div>
-            <div className="space-y-3 max-h-80 overflow-y-auto">
+            <div className="space-y-2 max-h-64 overflow-y-auto">
               {project.recent_commits?.slice(0, 5).map((commit) => (
                 <div
                   key={commit.hash}
-                  className="bg-gradient-to-r from-blue-50/50 to-indigo-50/50 rounded-xl p-4 hover:from-blue-100/50 hover:to-indigo-100/50 transition-all duration-300 border-l-4 border-blue-500/80 backdrop-blur-sm"
+                  className="bg-indigo-50/40 rounded-xl p-3.5 border-l-[3px] border-indigo-400 hover:bg-indigo-50/80 transition-colors"
                 >
-                  <p className="text-sm font-semibold text-gray-800 mb-2 leading-relaxed">
+                  <p className="text-xs font-semibold text-gray-700 mb-1.5 leading-relaxed line-clamp-2">
                     {commit.message}
                   </p>
-                  <div className="flex items-center justify-between text-xs text-gray-600">
-                    <span className="flex items-center">
-                      <UserIcon className="h-3 w-3 mr-1" />
+                  <div className="flex items-center justify-between text-[10px] text-gray-400">
+                    <span className="flex items-center gap-1">
+                      <UserIcon className="h-3 w-3" />
                       {commit.author}
                     </span>
                     <span>{commit.date}</span>
@@ -653,47 +581,45 @@ export const ProjectDetail: React.FC = () => {
             </div>
           </div>
 
-          {/* 分支信息 */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow hover:shadow-lg transition-all duration-300 p-5 border border-gray-100/50 hover:border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg mr-3">
-                <CodeBracketIcon className="h-5 w-5 text-white" />
+          {/* Branches */}
+          <div className="glass-card-static p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg flex items-center justify-center shadow-sm shadow-purple-500/20">
+                <CodeBracketIcon className="h-4 w-4 text-white" />
               </div>
-              <h2 className="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                分支
-              </h2>
+              <h2 className="text-sm font-bold text-[#1e1b4b]">Branches</h2>
             </div>
-            <div className="space-y-3 max-h-60 overflow-y-auto">
+            <div className="space-y-1.5 max-h-48 overflow-y-auto">
               {project.branches?.map((branch) => (
                 <div
                   key={branch.name}
-                  className={`flex items-center justify-between p-3 rounded-xl transition-all duration-300 backdrop-blur-sm ${
+                  className={`flex items-center justify-between p-2.5 rounded-xl transition-all ${
                     branch.name === project?.info?.current_branch
-                      ? "bg-gradient-to-r from-purple-100/50 to-pink-100/50 border border-purple-300/50"
-                      : "bg-gradient-to-r from-gray-50/50 to-gray-100/50 hover:from-gray-100/50 hover:to-gray-200/50"
+                      ? "bg-purple-50/60 border border-purple-200/50"
+                      : "hover:bg-gray-50"
                   }`}
                 >
-                  <div className="flex items-center">
+                  <div className="flex items-center gap-2 min-w-0">
                     <div
-                      className={`w-2 h-2 rounded-full mr-3 ${
+                      className={`w-2 h-2 rounded-full flex-shrink-0 ${
                         branch.name === project?.info?.current_branch
                           ? "bg-gradient-to-r from-purple-500 to-pink-500"
-                          : "bg-gray-400"
+                          : "bg-gray-300"
                       }`}
-                    ></div>
+                    />
                     <span
-                      className={`text-sm font-medium ${
+                      className={`text-xs font-medium truncate ${
                         branch.name === project?.info?.current_branch
-                          ? "text-purple-800"
-                          : "text-gray-700"
+                          ? "text-purple-700"
+                          : "text-gray-600"
                       }`}
                     >
                       {branch.name}
                     </span>
                   </div>
                   {branch.name === project?.info?.current_branch && (
-                    <span className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full">
-                      当前
+                    <span className="text-[10px] bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-0.5 rounded-full font-medium flex-shrink-0 ml-2">
+                      current
                     </span>
                   )}
                 </div>
@@ -702,28 +628,24 @@ export const ProjectDetail: React.FC = () => {
           </div>
         </div>
 
-        {/* 右侧：AI对话区域 */}
+        {/* Right column: AI Chat */}
         <div className="xl:col-span-2">
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow hover:shadow-lg transition-all duration-300 border border-gray-100/50 hover:border-gray-200 h-full flex flex-col overflow-hidden">
-            {/* 标题 */}
-            <div className="bg-gradient-to-r from-indigo-50/50 to-purple-50/50 px-6 py-4 border-b border-indigo-200/50">
-              <div className="flex items-center">
-                <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg mr-3">
-                  <ChatBubbleLeftRightIcon className="h-5 w-5 text-white" />
+          <div className="glass-card-static flex flex-col overflow-hidden h-full">
+            <div className="bg-gradient-to-r from-indigo-50/60 to-purple-50/60 px-5 py-4 border-b border-indigo-100/50">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center shadow-sm shadow-indigo-500/20">
+                  <ChatBubbleLeftRightIcon className="h-4 w-4 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold bg-gradient-to-r from-indigo-800 to-purple-800 bg-clip-text text-transparent">
-                    AI 智能对话
-                  </h2>
-                  <p className="text-xs text-gray-600">使用MCP工具增强的AI助手</p>
+                  <h2 className="text-sm font-bold text-[#1e1b4b]">AI Assistant</h2>
+                  <p className="text-[10px] text-gray-400">MCP-enhanced intelligent code analysis</p>
                 </div>
               </div>
             </div>
 
-            {/* 对话面板 */}
-            <div className="flex-1 p-6 overflow-hidden">
+            <div className="flex-1 p-5 overflow-hidden">
               <div className="h-full flex flex-col">
-                <div className="flex-1 bg-white rounded-xl border border-gray-200 overflow-hidden h-[calc(100vh-280px)]">
+                <div className="flex-1 bg-white rounded-xl border border-gray-100 overflow-hidden h-[calc(100vh-320px)]">
                   <ChatPanel
                     projectPath={decodedPath}
                     fileTree={project?.file_tree}

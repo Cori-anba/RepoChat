@@ -1,0 +1,20 @@
+{
+  "name": "repochat",
+  "version": "1.0.0",
+  "description": "AI-powered Git project understanding assistant",
+  "main": "main.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && python -m uvicorn app.main:app --reload --port 8000",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && python -m pip install -r requirements.txt"
+  },
+  "keywords": ["git", "ai", "mcp", "project-understanding"],
+  "author": "RePoChat Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -104,22 +104,22 @@ export const AISettings: React.FC = () => {
     <div className="p-8">
       <div className="mb-8">
         <p className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider mb-1">
-          Configuration
+          配置您的AI提供商和模型
         </p>
         <h1 className="text-[26px] font-bold text-[#1e1b4b] tracking-tight">
-          AI Settings
+          AI设置
         </h1>
       </div>
 
       <div className="max-w-2xl space-y-6">
         {/* Provider config */}
         <div className="glass-card-static p-6">
-          <h2 className="text-sm font-semibold text-[#1e1b4b] mb-5">Provider Configuration</h2>
+          <h2 className="text-sm font-semibold text-[#1e1b4b] mb-5">提供商配置</h2>
 
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                Select Provider
+                选择提供商
               </label>
               <select
                 value={selectedProvider}
@@ -130,7 +130,7 @@ export const AISettings: React.FC = () => {
                 }}
                 className="input-field"
               >
-                <option value="">Select a provider</option>
+                <option value="">选择提供商</option>
                 {providerList.map((provider) => (
                   <option key={provider.key} value={provider.key}>
                     {provider.icon} {provider.name} - {provider.description}
@@ -143,14 +143,14 @@ export const AISettings: React.FC = () => {
               <>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                    Model
+                    模型
                   </label>
                   <select
                     value={selectedModel}
                     onChange={(e) => setSelectedModel(e.target.value)}
                     className="input-field"
                   >
-                    <option value="">Select model</option>
+                    <option value="">选择模型</option>
                     {providers[selectedProvider].models.map((model: string) => (
                       <option key={model} value={model}>{model}</option>
                     ))}
@@ -160,13 +160,13 @@ export const AISettings: React.FC = () => {
                 {providers[selectedProvider].requires_api_key && (
                   <div>
                     <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                      API Key
+                      API密钥
                     </label>
                     <input
                       type="password"
                       value={apiKey}
                       onChange={(e) => setApiKey(e.target.value)}
-                      placeholder="Enter your API key"
+                      placeholder="输入您的API密钥"
                       className="input-field"
                     />
                   </div>
@@ -174,7 +174,7 @@ export const AISettings: React.FC = () => {
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                    Base URL (optional)
+                    基础URL（可选）
                   </label>
                   {selectedProvider === 'moonshot' ? (
                     <select
@@ -182,8 +182,8 @@ export const AISettings: React.FC = () => {
                       onChange={(e) => setBaseUrl(e.target.value)}
                       className="input-field"
                     >
-                      <option value="international">International (api.moonshot.ai)</option>
-                      <option value="china">China (api.moonshot.cn)</option>
+                      <option value="international">国际版 (api.moonshot.ai)</option>
+                      <option value="china">中国版 (api.moonshot.cn)</option>
                     </select>
                   ) : (
                     <input
@@ -198,12 +198,12 @@ export const AISettings: React.FC = () => {
 
                 {/* AI Parameters */}
                 <div className="pt-5 border-t border-gray-100">
-                  <h3 className="text-sm font-semibold text-[#1e1b4b] mb-4">AI Parameters</h3>
+                  <h3 className="text-sm font-semibold text-[#1e1b4b] mb-4">AI参数设置</h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-medium text-gray-500 mb-1.5">
-                        Temperature <span className="text-gray-300">(0.0-2.0)</span>
+                        温度 (Temperature) <span className="text-gray-300">(0.0-2.0)</span>
                       </label>
                       <input
                         type="number"
@@ -218,7 +218,7 @@ export const AISettings: React.FC = () => {
 
                     <div>
                       <label className="block text-xs font-medium text-gray-500 mb-1.5">
-                        Max Tokens
+                        最大令牌数 (Max Tokens)
                       </label>
                       <input
                         type="number"
@@ -248,7 +248,7 @@ export const AISettings: React.FC = () => {
 
                     <div>
                       <label className="block text-xs font-medium text-gray-500 mb-1.5">
-                        Frequency Penalty <span className="text-gray-300">(-2.0-2.0)</span>
+                        频率惩罚 (Frequency Penalty) <span className="text-gray-300">(-2.0-2.0)</span>
                       </label>
                       <input
                         type="number"
@@ -263,7 +263,7 @@ export const AISettings: React.FC = () => {
 
                     <div>
                       <label className="block text-xs font-medium text-gray-500 mb-1.5">
-                        Presence Penalty <span className="text-gray-300">(-2.0-2.0)</span>
+                        存在惩罚 (Presence Penalty) <span className="text-gray-300">(-2.0-2.0)</span>
                       </label>
                       <input
                         type="number"
@@ -283,13 +283,13 @@ export const AISettings: React.FC = () => {
                     onClick={handleTestConnection}
                     className="inline-flex items-center px-4 py-2.5 text-sm font-medium rounded-xl bg-white/60 backdrop-blur-sm border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-all duration-200"
                   >
-                    Test Connection
+                    测试连接
                   </button>
                   <button
                     onClick={handleSave}
                     className="btn-primary text-[13px]"
                   >
-                    Save Settings
+                    保存设置
                   </button>
                 </div>
               </>
@@ -299,7 +299,7 @@ export const AISettings: React.FC = () => {
 
         {/* Available providers info */}
         <div className="glass-card-static p-5">
-          <h3 className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-3">Available Providers</h3>
+          <h3 className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-3">可用提供商</h3>
           <div className="space-y-2">
             {providerList.map((provider) => (
               <div key={provider.key} className="flex items-center gap-2 text-sm text-gray-600">

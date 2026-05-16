@@ -274,7 +274,7 @@ export const ProjectDetail: React.FC = () => {
       <div className="p-8">
         <div className="flex flex-col items-center justify-center h-64 gap-3">
           <div className="w-10 h-10 border-[3px] border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
-          <p className="text-sm text-gray-400">Loading...</p>
+          <p className="text-sm text-gray-400">加载中...</p>
         </div>
       </div>
     );
@@ -284,7 +284,7 @@ export const ProjectDetail: React.FC = () => {
     return (
       <div className="p-8">
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <p className="text-sm text-gray-400">Project not found</p>
+          <p className="text-sm text-gray-400">项目未找到</p>
         </div>
       </div>
     );
@@ -315,7 +315,7 @@ export const ProjectDetail: React.FC = () => {
             onClick={handleClosePreview}
             className="text-indigo-500 hover:text-indigo-700 text-sm font-medium transition-colors"
           >
-            ← Back to AI Chat
+            ← 返回智能对话
           </button>
         </div>
         <FileViewer
@@ -356,12 +356,12 @@ export const ProjectDetail: React.FC = () => {
                 {isUpdating ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Updating...
+                    更新中...
                   </>
                 ) : (
                   <>
                     <ArrowPathIcon className="h-4 w-4" />
-                    Update
+                    更新仓库
                   </>
                 )}
               </button>
@@ -373,12 +373,12 @@ export const ProjectDetail: React.FC = () => {
                 {isDeleting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Deleting...
+                    删除中...
                   </>
                 ) : (
                   <>
                     <TrashIcon className="h-4 w-4" />
-                    Delete
+                    删除项目
                   </>
                 )}
               </button>
@@ -393,7 +393,7 @@ export const ProjectDetail: React.FC = () => {
                 <div className="w-7 h-7 bg-indigo-500 rounded-lg flex items-center justify-center">
                   <FolderIcon className="h-3.5 w-3.5 text-white" />
                 </div>
-                <p className="text-[11px] font-semibold text-indigo-600 uppercase tracking-wider">Repository</p>
+                <p className="text-[11px] font-semibold text-indigo-600 uppercase tracking-wider">仓库名称</p>
               </div>
               <p className="text-base font-bold text-indigo-900 truncate">{project.info?.name}</p>
             </div>
@@ -403,7 +403,7 @@ export const ProjectDetail: React.FC = () => {
                 <div className="w-7 h-7 bg-purple-500 rounded-lg flex items-center justify-center">
                   <CodeBracketIcon className="h-3.5 w-3.5 text-white" />
                 </div>
-                <p className="text-[11px] font-semibold text-purple-600 uppercase tracking-wider">Branch</p>
+                <p className="text-[11px] font-semibold text-purple-600 uppercase tracking-wider">当前分支</p>
               </div>
               <p className="text-base font-bold text-purple-900">{project.info?.current_branch}</p>
             </div>
@@ -413,7 +413,7 @@ export const ProjectDetail: React.FC = () => {
                 <div className="w-7 h-7 bg-pink-500 rounded-lg flex items-center justify-center">
                   <CodeBracketIcon className="h-3.5 w-3.5 text-white" />
                 </div>
-                <p className="text-[11px] font-semibold text-pink-600 uppercase tracking-wider">Commits</p>
+                <p className="text-[11px] font-semibold text-pink-600 uppercase tracking-wider">提交数量</p>
               </div>
               <p className="text-base font-bold text-pink-900">{project.info?.commits_count}</p>
             </div>
@@ -423,16 +423,16 @@ export const ProjectDetail: React.FC = () => {
                 <div className="w-7 h-7 bg-emerald-500 rounded-lg flex items-center justify-center">
                   <ArrowPathIcon className="h-3.5 w-3.5 text-white" />
                 </div>
-                <p className="text-[11px] font-semibold text-emerald-600 uppercase tracking-wider">Remote</p>
+                <p className="text-[11px] font-semibold text-emerald-600 uppercase tracking-wider">远程仓库</p>
               </div>
               <a
                 href={project.info?.remote_url || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-base font-bold text-emerald-900 hover:text-emerald-700 hover:underline transition-colors truncate block"
-                title={project.info?.remote_url || "None"}
+                title={project.info?.remote_url || "无"}
               >
-                {project.info?.remote_url || "None"}
+                {project.info?.remote_url || "无"}
               </a>
             </div>
           </div>
@@ -448,20 +448,21 @@ export const ProjectDetail: React.FC = () => {
                 <TrashIcon className="h-5 w-5 text-red-500" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#1e1b4b]">Confirm Delete</h3>
-                <p className="text-xs text-gray-400">This action cannot be undone</p>
+                <h3 className="text-base font-bold text-[#1e1b4b]">确认删除项目</h3>
+                <p className="text-xs text-gray-400">此操作不可撤销</p>
               </div>
             </div>
 
             <div className="bg-red-50/60 border border-red-100 rounded-xl p-4 mb-5">
               <p className="text-sm text-gray-700 mb-2">
-                Are you sure you want to delete{" "}
-                <span className="font-semibold text-red-600">{project.info?.name}</span>?
+                确定要删除{" "}
+                <span className="font-semibold text-red-600">{project.info?.name}</span>{" "}
+                吗？
               </p>
               <div className="text-xs text-gray-500 space-y-1">
-                <p>• Database records will be permanently deleted</p>
-                <p>• Local folder will be removed</p>
-                <p>• This action is irreversible</p>
+                <p>• 数据库记录将被永久删除</p>
+                <p>• 本地文件夹将被删除</p>
+                <p>• 此操作不可撤销</p>
               </div>
             </div>
 
@@ -470,7 +471,7 @@ export const ProjectDetail: React.FC = () => {
                 onClick={() => setShowDeleteConfirm(false)}
                 className="btn-secondary text-[13px]"
               >
-                Cancel
+                取消
               </button>
               <button
                 onClick={handleDeleteProject}
@@ -480,10 +481,10 @@ export const ProjectDetail: React.FC = () => {
                 {isDeleting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1.5" />
-                    Deleting...
+                    删除中...
                   </>
                 ) : (
-                  "Confirm Delete"
+                  "确认删除"
                 )}
               </button>
             </div>
@@ -501,13 +502,13 @@ export const ProjectDetail: React.FC = () => {
               <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center shadow-sm shadow-emerald-500/20">
                 <DocumentTextIcon className="h-4 w-4 text-white" />
               </div>
-              <h2 className="text-sm font-bold text-[#1e1b4b]">Files</h2>
+              <h2 className="text-sm font-bold text-[#1e1b4b]">文件结构</h2>
             </div>
 
             <div className="mb-3 relative">
               <input
                 type="text"
-                placeholder="Search files..."
+                placeholder="搜索文件..."
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-gray-200 bg-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400 transition-all"
@@ -517,7 +518,7 @@ export const ProjectDetail: React.FC = () => {
 
             {searchTerm && searchResults.length > 0 && (
               <div className="mb-3 p-2 bg-emerald-50/60 border border-emerald-100 rounded-lg">
-                <p className="text-[10px] text-emerald-600 mb-1">Found {searchResults.length} matches:</p>
+                <p className="text-[10px] text-emerald-600 mb-1">找到 {searchResults.length} 个匹配文件:</p>
                 <div className="space-y-0.5">
                   {searchResults.slice(0, 5).map((result) => (
                     <div
@@ -529,7 +530,7 @@ export const ProjectDetail: React.FC = () => {
                     </div>
                   ))}
                   {searchResults.length > 5 && (
-                    <p className="text-[10px] text-emerald-500">+ {searchResults.length - 5} more...</p>
+                    <p className="text-[10px] text-emerald-500">还有 {searchResults.length - 5} 个文件...</p>
                   )}
                 </div>
               </div>
@@ -537,14 +538,14 @@ export const ProjectDetail: React.FC = () => {
 
             {searchTerm && searchResults.length === 0 && (
               <div className="mb-3 p-2 bg-gray-50 border border-gray-100 rounded-lg">
-                <p className="text-[10px] text-gray-400">No matching files</p>
+                <p className="text-[10px] text-gray-400">未找到匹配的文件</p>
               </div>
             )}
 
             {isLoadingFile && (
               <div className="flex items-center justify-center py-8 gap-2">
                 <div className="w-5 h-5 border-2 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
-                <span className="text-xs text-gray-400">Loading...</span>
+                <span className="text-xs text-gray-400">加载文件结构...</span>
               </div>
             )}
             <div className="border border-gray-100 rounded-lg p-3 h-[calc(100vh-420px)] min-h-[300px] overflow-y-auto">
@@ -558,7 +559,7 @@ export const ProjectDetail: React.FC = () => {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg flex items-center justify-center shadow-sm shadow-blue-500/20">
                 <ArrowPathIcon className="h-4 w-4 text-white" />
               </div>
-              <h2 className="text-sm font-bold text-[#1e1b4b]">Recent Commits</h2>
+              <h2 className="text-sm font-bold text-[#1e1b4b]">最近提交</h2>
             </div>
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {project.recent_commits?.slice(0, 5).map((commit) => (
@@ -587,7 +588,7 @@ export const ProjectDetail: React.FC = () => {
               <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg flex items-center justify-center shadow-sm shadow-purple-500/20">
                 <CodeBracketIcon className="h-4 w-4 text-white" />
               </div>
-              <h2 className="text-sm font-bold text-[#1e1b4b]">Branches</h2>
+              <h2 className="text-sm font-bold text-[#1e1b4b]">分支</h2>
             </div>
             <div className="space-y-1.5 max-h-48 overflow-y-auto">
               {project.branches?.map((branch) => (
@@ -619,7 +620,7 @@ export const ProjectDetail: React.FC = () => {
                   </div>
                   {branch.name === project?.info?.current_branch && (
                     <span className="text-[10px] bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-0.5 rounded-full font-medium flex-shrink-0 ml-2">
-                      current
+                      当前
                     </span>
                   )}
                 </div>
@@ -637,8 +638,8 @@ export const ProjectDetail: React.FC = () => {
                   <ChatBubbleLeftRightIcon className="h-4 w-4 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-[#1e1b4b]">AI Assistant</h2>
-                  <p className="text-[10px] text-gray-400">MCP-enhanced intelligent code analysis</p>
+                  <h2 className="text-sm font-bold text-[#1e1b4b]">AI 智能对话</h2>
+                  <p className="text-[10px] text-gray-400">使用MCP工具增强的AI助手</p>
                 </div>
               </div>
             </div>

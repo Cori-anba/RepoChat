@@ -168,10 +168,10 @@ export const MCPSettingsNew: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <p className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider mb-1">
-            Configuration
+            管理MCP服务器和工具配置
           </p>
           <h1 className="text-[26px] font-bold text-[#1e1b4b] tracking-tight">
-            MCP Server Settings
+            MCP服务器设置
           </h1>
         </div>
 
@@ -181,7 +181,7 @@ export const MCPSettingsNew: React.FC = () => {
             className="inline-flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-medium rounded-xl bg-white/60 backdrop-blur-sm border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-all duration-200"
           >
             <ClipboardDocumentIcon className="h-4 w-4" />
-            Import
+            一键导入
           </button>
           <button
             onClick={() => {
@@ -201,21 +201,21 @@ export const MCPSettingsNew: React.FC = () => {
             className="btn-primary gap-1.5 text-[13px]"
           >
             <PlusIcon className="h-4 w-4" />
-            Manual Config
+            手动配置
           </button>
         </div>
       </div>
 
       {/* Server list */}
       <div>
-        <h2 className="text-sm font-semibold text-[#1e1b4b] mb-4">MCP Servers</h2>
+        <h2 className="text-sm font-semibold text-[#1e1b4b] mb-4">MCP 服务器</h2>
         {serverList.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center">
               <CogIcon className="h-7 w-7 text-gray-300" />
             </div>
-            <p className="text-sm text-gray-400">No MCP servers configured</p>
-            <p className="text-xs text-gray-300">Click the buttons above to add or import servers</p>
+            <p className="text-sm text-gray-400">暂无MCP服务器</p>
+            <p className="text-xs text-gray-300">点击上方按钮添加或导入服务器</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -305,15 +305,15 @@ const ServerCard: React.FC<{
 
       <div className="space-y-1.5 text-xs text-gray-400 mb-4">
         <div className="flex items-center gap-1.5">
-          <span className="font-medium text-gray-500">Type:</span> {server.transportType || 'stdio'}
+          <span className="font-medium text-gray-500">类型:</span> {server.transportType || 'stdio'}
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="font-medium text-gray-500">Command:</span>
+          <span className="font-medium text-gray-500">命令:</span>
           <span className="truncate">{server.command}</span>
         </div>
         {server.args && server.args.length > 0 && (
           <div className="flex items-center gap-1.5">
-            <span className="font-medium text-gray-500">Args:</span>
+            <span className="font-medium text-gray-500">参数:</span>
             <span className="truncate">{server.args.join(' ')}</span>
           </div>
         )}
@@ -326,14 +326,14 @@ const ServerCard: React.FC<{
           className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 text-xs font-medium rounded-lg bg-white/60 border border-emerald-200 text-emerald-600 hover:bg-emerald-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <PlayIcon className="h-3 w-3" />
-          Test
+          测试
         </button>
         <button
           onClick={onEdit}
           className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 text-xs font-semibold text-white rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 transition-all shadow-sm shadow-indigo-500/20"
         >
           <CogIcon className="h-3 w-3" />
-          Edit
+          编辑
         </button>
       </div>
     </div>
@@ -397,7 +397,7 @@ const ServerConfigModal: React.FC<{
       <div className="glass-card-static w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-bold text-[#1e1b4b] tracking-tight">
-            {server.name ? 'Edit MCP Server' : 'Add MCP Server'}
+            {server.name ? '编辑MCP服务器' : '添加MCP服务器'}
           </h2>
           <button onClick={onClose} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
             <XMarkIcon className="h-5 w-5" />
@@ -409,7 +409,7 @@ const ServerConfigModal: React.FC<{
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                  Server Name *
+                  服务器名称 *
                 </label>
                 <input
                   type="text"
@@ -422,14 +422,14 @@ const ServerConfigModal: React.FC<{
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                  Transport Type
+                  传输类型
                 </label>
                 <select
                   value={formData.transportType || 'stdio'}
                   onChange={(e) => setFormData({ ...formData, transportType: e.target.value })}
                   className="input-field"
                 >
-                  <option value="stdio">Standard I/O (stdio)</option>
+                  <option value="stdio">标准输入输出 (stdio)</option>
                   <option value="http">HTTP</option>
                 </select>
               </div>
@@ -437,7 +437,7 @@ const ServerConfigModal: React.FC<{
 
             <div>
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                Command *
+                命令 *
               </label>
               <input
                 type="text"
@@ -451,7 +451,7 @@ const ServerConfigModal: React.FC<{
 
             <div>
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                Arguments (space-separated)
+                参数（空格分隔）
               </label>
               <input
                 type="text"
@@ -482,21 +482,21 @@ const ServerConfigModal: React.FC<{
 
             <div>
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                Description
+                描述
               </label>
               <input
                 type="text"
                 value={formData.description || ''}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="input-field"
-                placeholder="MCP server description"
+                placeholder="MCP服务器描述"
               />
             </div>
 
             {formData.transportType === 'stdio' && (
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                  Environment Variables (KEY=VALUE, one per line)
+                  环境变量 (KEY=VALUE格式，每行一个)
                 </label>
                 <textarea
                   value={envString}
@@ -505,13 +505,16 @@ const ServerConfigModal: React.FC<{
                   rows={4}
                   placeholder={"MCP_MODE=stdio\nLOG_LEVEL=error\nDISABLE_CONSOLE_OUTPUT=true"}
                 />
+                <p className="text-xs text-gray-400 mt-1">
+                  格式: KEY=VALUE，每行一个环境变量
+                </p>
               </div>
             )}
 
             {formData.transportType === 'http' && (
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                  HTTP Headers (NAME=VALUE, one per line)
+                  HTTP头信息 (NAME=VALUE格式，每行一个)
                 </label>
                 <textarea
                   value={headersString}
@@ -520,6 +523,9 @@ const ServerConfigModal: React.FC<{
                   rows={4}
                   placeholder={"Authorization=Bearer token\nContent-Type=application/json"}
                 />
+                <p className="text-xs text-gray-400 mt-1">
+                  格式: NAME=VALUE，每行一个HTTP头
+                </p>
               </div>
             )}
           </div>
@@ -531,20 +537,20 @@ const ServerConfigModal: React.FC<{
               disabled={isTesting}
               className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium rounded-xl bg-white/60 border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-colors disabled:opacity-40"
             >
-              {isTesting ? 'Testing...' : 'Test Connection'}
+              {isTesting ? '测试中...' : '测试连接'}
             </button>
             <button
               type="button"
               onClick={onClose}
               className="btn-secondary text-[13px]"
             >
-              Cancel
+              取消
             </button>
             <button
               type="submit"
               className="btn-primary text-[13px]"
             >
-              Save
+              保存
             </button>
           </div>
         </form>

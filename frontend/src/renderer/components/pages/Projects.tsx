@@ -56,10 +56,10 @@ export const Projects: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <p className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider mb-1">
-            Repository Management
+            管理您的Git仓库
           </p>
           <h1 className="text-[26px] font-bold text-[#1e1b4b] tracking-tight">
-            Projects
+            项目
           </h1>
         </div>
 
@@ -68,28 +68,28 @@ export const Projects: React.FC = () => {
           className="btn-primary gap-1.5 text-[13px]"
         >
           <PlusIcon className="h-4 w-4" />
-          Clone Repository
+          克隆仓库
         </button>
       </div>
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center h-64 gap-3">
           <ArrowPathIcon className="h-8 w-8 animate-spin text-indigo-400" />
-          <p className="text-sm text-gray-400">Loading...</p>
+          <p className="text-sm text-gray-400">加载中...</p>
         </div>
       ) : projects.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center">
             <FolderIcon className="h-8 w-8 text-gray-300" />
           </div>
-          <h3 className="text-base font-semibold text-[#1e1b4b]">No Projects</h3>
-          <p className="text-sm text-gray-400">Clone a repository to get started</p>
+          <h3 className="text-base font-semibold text-[#1e1b4b]">暂无项目</h3>
+          <p className="text-sm text-gray-400">通过克隆仓库开始使用</p>
           <button
             onClick={() => setShowCloneModal(true)}
             className="btn-primary gap-1.5 text-[13px] mt-2"
           >
             <PlusIcon className="h-4 w-4" />
-            Clone Repository
+            克隆仓库
           </button>
         </div>
       ) : (
@@ -111,15 +111,15 @@ export const Projects: React.FC = () => {
 
                 <div className="flex items-center gap-3 text-xs text-gray-400 mb-4">
                   <span className="badge badge-indigo">{project.current_branch}</span>
-                  <span>{project.commits_count} commits</span>
-                  <span>{project.last_commit?.date ? new Date(project.last_commit.date).toLocaleDateString() : 'N/A'}</span>
+                  <span>提交数: {project.commits_count}</span>
+                  <span>最后更新: {project.last_commit?.date ? new Date(project.last_commit.date).toLocaleDateString() : 'N/A'}</span>
                 </div>
 
                 <Link
                   to={`/projects/${encodeURIComponent(project.path)}`}
                   className="btn-primary w-full justify-center text-[13px]"
                 >
-                  View Details
+                  查看详情
                 </Link>
               </div>
             </div>
@@ -132,7 +132,7 @@ export const Projects: React.FC = () => {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="glass-card-static w-full max-w-md p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-[#1e1b4b] tracking-tight">Clone Repository</h2>
+              <h2 className="text-lg font-bold text-[#1e1b4b] tracking-tight">克隆仓库</h2>
               <button onClick={() => setShowCloneModal(false)} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
                 <XMarkIcon className="h-5 w-5" />
               </button>
@@ -142,7 +142,7 @@ export const Projects: React.FC = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                    Repository URL
+                    仓库URL
                   </label>
                   <input
                     type="url"
@@ -156,7 +156,7 @@ export const Projects: React.FC = () => {
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                    Local Path (optional)
+                    本地路径（可选）
                   </label>
                   <input
                     type="text"
@@ -174,14 +174,14 @@ export const Projects: React.FC = () => {
                   disabled={cloneMutation.isPending}
                   className="btn-primary flex-1 justify-center text-[13px] disabled:opacity-50"
                 >
-                  {cloneMutation.isPending ? 'Cloning...' : 'Clone'}
+                  {cloneMutation.isPending ? '克隆中...' : '克隆'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowCloneModal(false)}
                   className="btn-secondary flex-1 justify-center text-[13px]"
                 >
-                  Cancel
+                  取消
                 </button>
               </div>
             </form>

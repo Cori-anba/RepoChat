@@ -288,10 +288,10 @@ export const GitHubRecommendations: React.FC = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider mb-1">
-            Discover
+            发现热门的GitHub项目
           </p>
           <h1 className="text-[26px] font-bold text-[#1e1b4b] tracking-tight">
-            GitHub Recommendations
+            GitHub项目推荐
           </h1>
         </div>
         <button
@@ -302,14 +302,14 @@ export const GitHubRecommendations: React.FC = () => {
           {recommendationMutation.isPending ? (
             <>
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Loading...
+              推送中...
             </>
           ) : (
             <>
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              Smart Recommend
+              智能推送
             </>
           )}
         </button>
@@ -324,7 +324,7 @@ export const GitHubRecommendations: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search GitHub repositories..."
+              placeholder="搜索GitHub项目..."
               className="w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-gray-200 bg-white/70 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-indigo-400/40 focus:border-indigo-400 transition-all"
             />
           </div>
@@ -334,8 +334,8 @@ export const GitHubRecommendations: React.FC = () => {
             className="btn-primary text-[13px] disabled:opacity-50"
           >
             {searchMutation.isPending || enhancedSearchMutation.isPending
-              ? "Searching..."
-              : "Search"}
+              ? "搜索中..."
+              : "搜索"}
           </button>
           <button
             type="button"
@@ -347,7 +347,7 @@ export const GitHubRecommendations: React.FC = () => {
             }`}
           >
             <FunnelIcon className="h-4 w-4" />
-            Filters
+            筛选
             {hasActiveFilters && (
               <span className="w-4 h-4 bg-indigo-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
                 !
@@ -360,7 +360,7 @@ export const GitHubRecommendations: React.FC = () => {
         {showFilters && (
           <div className="mt-3 p-5 rounded-xl bg-white/70 backdrop-blur-md border border-gray-200">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Advanced Filters</h3>
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">高级筛选</h3>
               <button onClick={() => setShowFilters(false)} className="p-1 text-gray-400 hover:text-gray-600 rounded">
                 <XMarkIcon className="h-4 w-4" />
               </button>
@@ -369,14 +369,14 @@ export const GitHubRecommendations: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                  Language
+                  编程语言
                 </label>
                 <select
                   value={filters.language}
                   onChange={(e) => handleFilterChange("language", e.target.value)}
                   className="input-field text-sm"
                 >
-                  <option value="">All Languages</option>
+                  <option value="">所有语言</option>
                   {programmingLanguages.map((lang) => (
                     <option key={lang} value={lang}>{lang}</option>
                   ))}
@@ -385,16 +385,16 @@ export const GitHubRecommendations: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                  Sort By
+                  排序方式
                 </label>
                 <select
                   value={filters.sort}
                   onChange={(e) => handleFilterChange("sort", e.target.value)}
                   className="input-field text-sm"
                 >
-                  <option value="">Default</option>
-                  <option value="stars-asc">Stars (Low to High)</option>
-                  <option value="stars-desc">Stars (High to Low)</option>
+                  <option value="">默认排序</option>
+                  <option value="stars-asc">星标数升序</option>
+                  <option value="stars-desc">星标数降序</option>
                 </select>
               </div>
 
@@ -402,17 +402,17 @@ export const GitHubRecommendations: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                  Updated
+                  更新时间
                 </label>
                 <select
                   value={filters.updatedAfter}
                   onChange={(e) => handleFilterChange("updatedAfter", e.target.value)}
                   className="input-field text-sm"
                 >
-                  <option value="">All Time</option>
-                  <option value="7d">Last 7 days</option>
-                  <option value="30d">Last 30 days</option>
-                  <option value="90d">Last 90 days</option>
+                  <option value="">全部时间</option>
+                  <option value="7d">最近7天</option>
+                  <option value="30d">最近30天</option>
+                  <option value="90d">最近90天</option>
                 </select>
               </div>
             </div>
@@ -423,14 +423,14 @@ export const GitHubRecommendations: React.FC = () => {
                 disabled={!hasActiveFilters}
                 className="text-xs text-gray-400 hover:text-gray-600 disabled:opacity-30 transition-colors"
               >
-                Clear Filters
+                清除筛选
               </button>
               <button
                 onClick={handleEnhancedSearch}
                 disabled={enhancedSearchMutation.isPending || !searchQuery.trim()}
                 className="inline-flex items-center px-4 py-2 text-xs font-semibold rounded-lg text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors disabled:opacity-40"
               >
-                {enhancedSearchMutation.isPending ? "Searching..." : "Apply Filters"}
+                {enhancedSearchMutation.isPending ? "搜索中..." : "应用筛选"}
               </button>
             </div>
           </div>
@@ -441,15 +441,15 @@ export const GitHubRecommendations: React.FC = () => {
       {isLoadingTrending && !searchMutation.data ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
           <div className="w-10 h-10 border-[3px] border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
-          <p className="text-sm text-gray-400">Loading trending projects...</p>
+          <p className="text-sm text-gray-400">加载热门项目中...</p>
         </div>
       ) : repositories.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
           <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center">
             <CodeBracketIcon className="h-8 w-8 text-gray-300" />
           </div>
-          <p className="text-sm text-gray-400">No repositories found</p>
-          <p className="text-xs text-gray-300">Try searching or wait for trending projects to load</p>
+          <p className="text-sm text-gray-400">暂无项目</p>
+          <p className="text-xs text-gray-300">尝试搜索或等待热门项目加载</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -488,7 +488,7 @@ export const GitHubRecommendations: React.FC = () => {
 
               <div className="flex items-center text-[11px] text-gray-300 mb-4">
                 <CalendarIcon className="h-3 w-3 mr-1" />
-                Updated {formatDate(repo.updated_at)}
+                更新于 {formatDate(repo.updated_at)}
               </div>
 
               <div className="flex gap-2">
@@ -497,13 +497,13 @@ export const GitHubRecommendations: React.FC = () => {
                   disabled={isLoadingDetail}
                   className="flex-1 py-2 text-xs font-medium rounded-lg bg-white/60 border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-40"
                 >
-                  Details
+                  {isLoadingDetail ? "加载中..." : "查看详情"}
                 </button>
                 <button
                   onClick={() => handleClone(repo)}
                   className="flex-1 py-2 text-xs font-semibold text-white rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 transition-all shadow-sm shadow-indigo-500/20"
                 >
-                  Clone
+                  克隆
                 </button>
               </div>
             </div>
@@ -556,14 +556,14 @@ export const GitHubRecommendations: React.FC = () => {
                 </div>
                 <div className="bg-emerald-50/60 rounded-xl p-4 text-center">
                   <CodeBracketIcon className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
-                  <div className="text-base font-bold text-emerald-700">{selectedRepo.language || "N/A"}</div>
-                  <div className="text-[10px] text-emerald-400 uppercase tracking-wider">Language</div>
+                  <div className="text-base font-bold text-emerald-700">{selectedRepo.language || "未知"}</div>
+                  <div className="text-[10px] text-emerald-400 uppercase tracking-wider">语言</div>
                 </div>
               </div>
 
               {selectedRepo.description && (
                 <div className="mb-6">
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Description</h3>
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">项目描述</h3>
                   <p className="text-sm text-gray-600 leading-relaxed bg-gray-50/60 rounded-xl p-4 border border-gray-100">
                     {selectedRepo.description}
                   </p>
@@ -595,19 +595,19 @@ export const GitHubRecommendations: React.FC = () => {
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                 </svg>
-                View on GitHub
+                在GitHub上查看
               </a>
               <button
                 onClick={() => handleClone(selectedRepo)}
                 className="inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition-colors flex-1"
               >
-                Clone Repository
+                克隆项目
               </button>
               <button
                 onClick={() => setShowDetailModal(false)}
                 className="btn-secondary flex-1 justify-center text-[13px]"
               >
-                Close
+                关闭
               </button>
             </div>
           </div>
@@ -618,10 +618,10 @@ export const GitHubRecommendations: React.FC = () => {
       {showCloneModal && selectedRepo && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="glass-card-static w-full max-w-md p-6 shadow-2xl">
-            <h2 className="text-lg font-bold text-[#1e1b4b] tracking-tight mb-4">Clone Repository</h2>
+            <h2 className="text-lg font-bold text-[#1e1b4b] tracking-tight mb-4">克隆项目</h2>
 
             <div className="mb-4">
-              <p className="text-xs text-gray-400 mb-1.5">Repository URL:</p>
+              <p className="text-xs text-gray-400 mb-1.5">项目URL:</p>
               <p className="text-sm font-mono bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-gray-600">
                 {selectedRepo.html_url}.git
               </p>
@@ -629,7 +629,7 @@ export const GitHubRecommendations: React.FC = () => {
 
             <div className="mb-5">
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                Local Path (optional)
+                本地路径（可选）
               </label>
               <input
                 type="text"
@@ -646,13 +646,13 @@ export const GitHubRecommendations: React.FC = () => {
                 disabled={cloneMutation.isPending}
                 className="btn-primary flex-1 justify-center text-[13px] disabled:opacity-50"
               >
-                {cloneMutation.isPending ? "Cloning..." : "Clone"}
+                {cloneMutation.isPending ? "克隆中..." : "克隆"}
               </button>
               <button
                 onClick={() => setShowCloneModal(false)}
                 className="btn-secondary flex-1 justify-center text-[13px]"
               >
-                Cancel
+                取消
               </button>
             </div>
           </div>

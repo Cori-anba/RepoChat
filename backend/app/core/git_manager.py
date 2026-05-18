@@ -385,19 +385,40 @@ class GitManager:
         try:
             # 提取仓库名称
             repo_name = url.split('/')[-1].replace('.git', '')
-            
+
             if path is None:
                 # 使用默认路径
                 target_path = Path(settings.default_clone_path) / repo_name
             else:
                 # 自定义路径下创建repo_name子目录
                 target_path = Path(path).resolve().absolute() / repo_name
-            
+
             logger.debug(f"Cloning to path: {target_path}, exists: {target_path.exists()}")
-            
+
+            # 如果目标目录已存在且非空
             if target_path.exists() and any(target_path.iterdir()):
-                return {"error": "Directory already exists and is not empty"}
-            
+                # 检查是否已经是有效的 Git 仓库，如果是则直接接管
+                try:
+                    existing_repo = git.Repo(str(target_path))
+                    remote_url = existing_repo.remotes.origin.url if existing_repo.remotes else url
+
+                    # 添加到管理器
+                    self.add_project(str(target_path))
+
+                    # 保存到数据库
+                    self._save_repo_to_db(str(target_path), remote_url, repo_name)
+
+                    return {
+                        "success": True,
+                        "path": str(target_path),
+                        "remote_url": remote_url,
+                        "message": "已接管现有仓库"
+                    }
+                except git.InvalidGitRepositoryError:
+                    return {"error": "目录已存在且不是有效的Git仓库，无法克隆"}
+                except Exception:
+                    return {"error": "目录已存在且不为空"}
+
             # 异步克隆
             loop = asyncio.get_event_loop()
             repo = await loop.run_in_executor(
@@ -406,34 +427,79 @@ class GitManager:
                 url,
                 str(target_path)
             )
-            
+
             # 添加到管理器
             self.add_project(str(target_path))
-            
+
             # 保存到数据库
-            try:
-                from app.core.database import SessionLocal
-                from app.services.repository_service import RepositoryService
-                
-                db = SessionLocal()
-                repo_service = RepositoryService(db)
-                repo_service.add_repository(
-                    local_path=str(target_path),
-                    remote_url=repo.remotes.origin.url,
-                    name=repo_name
-                )
-                db.close()
-            except Exception as db_error:
-                logger.warning(f"Failed to save repository to database: {db_error}")
-            
+            self._save_repo_to_db(str(target_path), repo.remotes.origin.url, repo_name)
+
             return {
                 "success": True,
                 "path": str(target_path),
                 "remote_url": repo.remotes.origin.url
             }
-            
+
         except Exception as e:
             return {"error": str(e)}
+
+    def _save_repo_to_db(self, local_path: str, remote_url: str, name: str):
+        """将仓库信息保存到数据库"""
+        try:
+            from app.core.database import SessionLocal
+            from app.services.repository_service import RepositoryService
+
+            db = SessionLocal()
+            repo_service = RepositoryService(db)
+            repo_service.add_repository(
+                local_path=local_path,
+                remote_url=remote_url,
+                name=name
+            )
+            db.close()
+            logger.info(f"Saved repository to database: {local_path}")
+        except Exception as db_error:
+            logger.warning(f"Failed to save repository to database: {db_error}")
+
+    def scan_filesystem_for_repositories(self) -> int:
+        """扫描默认克隆目录，发现并接管尚未注册的 Git 仓库"""
+        discovered = 0
+        default_dir = Path(settings.default_clone_path)
+
+        if not default_dir.exists():
+            logger.info(f"Default clone directory does not exist: {default_dir}")
+            return 0
+
+        try:
+            for item in default_dir.iterdir():
+                if not item.is_dir():
+                    continue
+
+                # 跳过已经注册的
+                if str(item.resolve()) in self.projects:
+                    continue
+
+                # 检查是否为有效 Git 仓库
+                try:
+                    test_repo = git.Repo(str(item))
+                    remote_url = test_repo.remotes.origin.url if test_repo.remotes else None
+
+                    if self.add_project(str(item)):
+                        discovered += 1
+                        logger.info(f"Discovered repository on filesystem: {item}")
+                        # 同时写入数据库
+                        self._save_repo_to_db(str(item), remote_url, item.name)
+                except git.InvalidGitRepositoryError:
+                    continue
+                except Exception as e:
+                    logger.debug(f"Skipping {item}: {e}")
+                    continue
+        except PermissionError:
+            logger.warning(f"Permission denied scanning {default_dir}")
+
+        if discovered > 0:
+            logger.info(f"Scanned filesystem: discovered {discovered} new repositories")
+        return discovered
     
     async def search_projects(self, query: str) -> List[Dict[str, Any]]:
         """搜索项目"""

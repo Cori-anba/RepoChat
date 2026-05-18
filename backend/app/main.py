@@ -25,6 +25,7 @@ from app.core.git_manager import GitManager
 from app.core.ai_manager import AIManager
 from app.core.mcp_server import MCPServerManager
 from app.core.database import init_db
+from app.models.repository import Repository  # 确保模型在 init_db 前导入
 
 logger = logging.getLogger(__name__)
 
@@ -141,6 +142,10 @@ async def lifespan(app: FastAPI):
     # 从数据库加载仓库
     loaded_count = app.state.git_manager.load_repositories_from_database()
     logger.info(f"Loaded {loaded_count} repositories from database")
+
+    # 扫描文件系统中尚未注册的 Git 仓库
+    discovered = app.state.git_manager.scan_filesystem_for_repositories()
+    logger.info(f"Discovered {discovered} repositories from filesystem scan")
     
     yield
     # Shutdown

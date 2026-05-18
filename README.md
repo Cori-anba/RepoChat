@@ -1,246 +1,159 @@
-# RePoChat - AI驱动的Git项目智能分析助手
+# RePoChat — 用聊天的方式读懂任何代码仓库
 
-RePoChat 是一个现代化的AI驱动Git项目理解与分析平台，帮助开发者通过自然语言交互快速探索、理解和分析代码项目。
+RePoChat 是一个 AI 驱动的 Git 仓库分析工具。克隆一个仓库，然后像跟同事聊天一样向 AI 提问——"这个项目做了什么事？""数据库表结构在哪定义的？""认证逻辑是怎么写的？"——AI 会直接阅读你的代码并给出答案，不用再一个文件一个文件地翻。
 
-## ✨ 核心特性
+界面采用深紫渐变侧边栏搭配毛玻璃卡片的玻璃态科技风设计，靛蓝、紫罗兰、粉红三色体系贯穿全局，干净利落。
 
-### 🚀 智能项目探索
-- **自然语言查询**: 使用日常语言提问关于代码库的任何问题
-- **智能文件分析**: AI自动识别关键文件并提取相关信息
-- **实时对话**: 流畅的聊天式交互体验
+![主页概览](docs/images/主页展示.jpg)
 
-### 🤖 多AI提供商支持
-- **OpenAI**: GPT-4, GPT-4o, GPT-4o-mini
-- **Anthropic**: Claude 3.5 Sonnet, Claude 3.7 Sonnet  
-- **Google Gemini**: Gemini 2.5 Pro, Gemini 2.5 Flash
-- **DeepSeek**: DeepSeek Chat, DeepSeek Reasoner
-- **moonshot**: kimi系列
-- **可扩展架构**: 轻松添加新的AI提供商
+---
 
-### 🔧 开发者工具
-- **Git集成**: 完整的Git仓库管理功能
-- **文件结构可视化**: 交互式树形视图浏览
-- **智能代码分析**: 自动识别技术栈和架构模式
-- **MCP协议支持**: 模型上下文协议扩展
+## 打开之后怎么用
 
-### 💡 智能功能
-- **项目概览生成**: 一键生成完整项目文档
-- **代码注释生成**: 自动为代码添加高质量注释
-- **架构分析**: 深度分析项目结构和依赖关系
-- **问题诊断**: 识别潜在问题和改进建议
+### 第一步：配置 AI 提供商
 
-## 🏗️ 技术架构
+点左侧边栏的「AI 设置」，选择一个 AI 服务商（OpenAI、Claude、DeepSeek、Gemini、Kimi 都支持），填上 API Key，点「测试连接」确认通了，再点「保存设置」。
+
+### 第二步：克隆一个仓库
+
+点左侧「项目」→「克隆仓库」，把 GitHub 上任意仓库的 URL 贴进去（比如 `https://github.com/vuejs/core.git`），点克隆。几秒钟后仓库就下载到本地了，点「查看详情」进入项目。
+
+### 第三步：跟 AI 聊你的代码
+
+进入项目详情页后，右侧就是 AI 对话框。你可以问它：
+
+- *"这个项目的整体架构是什么样的？"*
+- *"用户登录的逻辑在哪几个文件里？"*
+- *"帮我解释一下 src/main.ts 里做了什么"*
+- *"这个项目用了哪些第三方依赖？"*
+
+AI 会自动翻看文件树、读取关键代码、搜索相关内容，然后给出有来龙去脉的回答，不是那种泛泛而谈的套话。
+
+![项目详情与AI对话](docs/images/查看项目的详情页以及针对该项目的AI提问.jpg)
+
+---
+
+## 其他实用功能
+
+### GitHub 项目推荐
+
+不知道该看什么项目？点「GitHub 推荐」，系统会展示 GitHub 上的热门仓库。也可以用顶部的搜索框按语言、更新时间筛选，找到感兴趣的项目后一键克隆到本地。
+
+![GitHub推荐页面](docs/images/推荐页面展示.jpg)
+
+### 查看项目详情再决定
+
+在推荐页看到感兴趣的项目，先点「查看详情」——会弹出项目的 Stars、Forks、README 等信息，确认值得一看再克隆。还可以直接跳转到 GitHub 原仓库。
+
+![项目详情弹窗](docs/images/推荐页支持查看项目详情，支持一键跳转到github仓库.jpg)
+
+### MCP 服务器扩展
+
+在「MCP 设置」里可以接入 MCP 协议工具，扩展 AI 的能力——比如让它读写文件、执行终端命令、查询数据库等。支持手动配置，也可以从剪贴板一键导入 JSON 配置。
+
+### 对话历史回溯
+
+每次跟 AI 的对话都会自动保存。点聊天面板右上角的「历史」按钮，可以按收藏、时间、消耗 token 数来搜索和筛选之前的对话，随时翻出来再看。
+
+---
+
+## 项目结构
 
 ```
-repochat/
-├── backend/                 # FastAPI 后端服务
-│   ├── app/
-│   │   ├── api/routes/     # RESTful API 端点
-│   │   ├── core/          # 核心业务逻辑
-│   │   │   ├── ai_manager.py          # AI服务管理
-│   │   │   ├── git_manager.py         # Git操作管理
-│   │   │   ├── smart_conversation_manager.py  # 智能对话引擎
-│   │   │   └── mcp_server.py          # MCP协议支持
-│   │   └── main.py        # 应用入口点
-│   ├── requirements.txt    # Python依赖
-│   └── .env.example       # 环境配置示例
-├── frontend/              # React + TypeScript 前端
-│   ├── src/
-│   │   ├── renderer/
-│   │   │   ├── components/pages/      # 页面组件
-│   │   │   │   ├── SmartChatPanel.tsx # 智能聊天界面
-│   │   │   │   ├── ProjectDetail.tsx  # 项目详情
-│   │   │   │   └── AISettings.tsx     # AI配置
-│   │   │   ├── services/api.ts        # API客户端
-│   │   │   └── App.tsx               # 主应用组件
-│   │   └── main.tsx       # 应用入口
-│   ├── package.json       # Node.js依赖
-│   └── vite.config.ts     # 构建配置
-└── docs/                  # 项目文档
+RePoChat/
+├── backend/                 # Python FastAPI 后端
+│   └── app/
+│       ├── api/routes/      # REST API 路由
+│       ├── core/            # AI管理、Git管理、MCP服务
+│       ├── models/          # 数据库模型
+│       └── services/        # 业务服务层
+├── frontend/                # React + TypeScript 前端
+│   └── src/renderer/
+│       ├── components/      # 页面和布局组件
+│       ├── services/        # API 调用层
+│       └── styles/          # 样式文件
+└── docs/                    # 文档和截图
 ```
 
-## 🚀 快速开始
+---
 
-### 环境要求
-- **Python**: 3.8+ 
-- **Node.js**: 16+
-- **Git**: 最新版本
-- **内存**: 至少4GB RAM
+## 本地运行
 
-### 后端设置
+### 你需要有
 
-1. **安装依赖**
-   ```bash
-   cd backend
-   python -m venv venv
-   
-   # Windows
-   venv\Scripts\activate
-   # Linux/Mac
-   source venv/bin/activate
-   
-   pip install -r requirements.txt
-   ```
+- **Python 3.8+** 和 **Node.js 16+**
+- 至少一个 AI 服务商的 API Key
 
-2. **配置环境变量**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   编辑 `.env` 文件，配置AI提供商API密钥：
-   ```
-   OPENAI_API_KEY=your_openai_api_key
-   ANTHROPIC_API_KEY=your_anthropic_api_key
-   GEMINI_API_KEY=your_gemini_api_key
-   DEEPSEEK_API_KEY=your_deepseek_api_key
-   ```
+### 安装步骤
 
+**1. 后端**
 
-### 前端设置
-
-1. **安装依赖**
-   ```bash
-   cd frontend
-   npm install
-   ```
-
-### 配置好了之后
-'''
-#打开项目的根目录
-backend\venv\Scripts\activate  #激活Python虚拟环境（若PATH配置了Python，则可以跳过）
-npm run dev   #启动项目
-打开浏览器访问 ：http://localhost:5173
-'''
-
-## 📖 使用指南
-
-### 1. 项目克隆与管理
-- 在项目页面点击"克隆仓库"
-- 输入Git URL (支持HTTP/SSH)
-- 选择本地存储路径（可选）
-- 实时查看克隆进度和状态
-
-### 2. AI提供商配置
-- 进入"AI设置"页面
-- 选择首选AI提供商
-- 输入API密钥并测试连接
-- 支持多提供商冗余配置
-
-### 3. 智能对话分析
-- 选择要分析的项目
-- 在聊天界面输入您的问题，例如：
-  - "这个项目是做什么的？"
-  - "使用什么技术栈？"
-  - "解释一下main.py的功能"
-  - "如何运行这个项目？"
-- AI会自动分析相关文件并提供精准回答
-
-### 4. 高级功能
-- **文件树浏览**: 可视化查看项目结构
-- **代码预览**: 直接查看文件内容
-- **MCP扩展**: 添加自定义工具和资源
-- **批量操作**: 支持多项目同时分析
-
-## 🔌 API接口
-
-### 核心端点
-
-#### Git操作
-- `POST /api/git/clone` - 克隆Git仓库
-- `GET /api/git/projects` - 获取项目列表
-- `GET /api/git/projects/{path}` - 获取项目详情
-- `DELETE /api/git/projects/{path}` - 删除项目
-
-#### AI服务
-- `GET /api/ai/providers` - 获取支持的AI提供商
-- `POST /api/ai/test-connection` - 测试AI连接
-- `POST /api/ai/smart-conversation/start` - 开始智能对话
-- `POST /api/ai/smart-conversation/chat` - 智能对话聊天
-
-#### 项目分析
-- `POST /api/projects/{path}/analyze` - AI项目分析
-- `POST /api/projects/{path}/generate-comments` - 生成代码注释
-- `POST /api/projects/{path}/analyze-architecture` - 架构分析
-
-#### MCP管理
-- `GET /api/mcp/servers` - 获取MCP服务器列表
-- `POST /api/mcp/servers` - 添加MCP服务器
-- `DELETE /api/mcp/servers/{name}` - 删除MCP服务器
-
-## 🛠️ 开发指南
-
-### 项目结构
-项目采用清晰的分层架构，便于维护和扩展：
-
-- **后端**: FastAPI + Pydantic + 异步IO
-- **前端**: React + TypeScript + TailwindCSS
-- **通信**: RESTful API + WebSocket（可选）
-- **存储**: 内存存储 + 文件系统缓存
-
-### 添加新的AI提供商
-
-1. 在 `backend/app/core/ai_manager.py` 中添加提供商实现
-2. 更新 `get_available_providers()` 方法
-3. 添加对应的配置验证逻辑
-4. 在前端设置页面添加UI支持
-
-### 自定义工具扩展
-
-通过MCP协议添加自定义工具：
-
-```python
-# 在 backend/app/core/mcp_server.py 中添加工具
-async def handle_custom_tool(self, arguments: Dict) -> Dict:
-    # 实现自定义工具逻辑
-    return {"result": "success", "data": custom_data}
-```
-
-## 🌟 特色功能详解
-
-### 智能对话引擎
-- **上下文感知**: 保持对话上下文，理解后续问题
-- **工具调用**: 自动选择合适工具获取信息
-- **文件智能选择**: 基于问题内容自动识别关键文件
-- **实时反馈**: 显示工具调用状态和结果
-
-### 项目分析能力
-- **技术栈识别**: 自动检测框架、库和依赖
-- **架构可视化**: 生成项目结构图和依赖关系
-- **代码质量评估**: 提供改进建议和最佳实践
-- **文档生成**: 自动创建项目文档
-
-### 用户体验优化
-- **响应式设计**: 支持桌面和移动设备
-- **实时预览**: 边输入边查看结果
-- **快捷键支持**: 提高操作效率
-- **主题切换**: 明暗主题支持
-
-## 🚀 部署指南
-
-### 生产环境部署
 ```bash
-# 后端部署
 cd backend
+
+# 创建虚拟环境
+python -m venv venv
+
+# 激活虚拟环境
+# Windows:
+venv\Scripts\activate
+# Mac / Linux:
+source venv/bin/activate
+
+# 安装依赖
 pip install -r requirements.txt
-gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app
+```
 
-# 前端部署
+**2. 配置 API Key**
+
+复制 `.env.example` 为 `.env`，填上你要用的 AI 服务商 Key：
+
+```
+OPENAI_API_KEY=你的OpenAI_Key
+ANTHROPIC_API_KEY=你的Claude_Key
+DEEPSEEK_API_KEY=你的DeepSeek_Key
+```
+
+不用的服务商 Key 留空就行，不用全填。
+
+**3. 前端**
+
+```bash
 cd frontend
-npm run build
-npm run preview
+npm install
 ```
 
-### Docker部署
-```dockerfile
-# 使用提供的Dockerfile
-docker build -t repochat .
-docker run -p 8000:8000 -p 5173:5173 repochat
+**4. 启动**
+
+```bash
+# 回到项目根目录
+npm run dev
 ```
 
-### 环境变量配置
-生产环境需要配置以下环境变量：
-- `DATABASE_URL`: 数据库连接字符串
-- `REDIS_URL`: Redis连接字符串（可选）
-- `API_KEYS`: 各AI提供商的API密钥
-- `LOG_LEVEL`: 日志级别
+浏览器打开 `http://localhost:5173` 就能用了。
 
+---
+
+## 常见问题
+
+**Q：克隆仓库时报「目录已存在」？**
+
+A：说明你之前已经克隆过这个仓库了，系统会自动接管已有的本地文件夹，不会重复克隆。
+
+**Q：重启之后项目列表空了？**
+
+A：已修复。现在克隆的仓库会持久化到数据库，重启不会丢失。而且启动时会自动扫描默认目录下的 Git 仓库并接管。
+
+**Q：支持哪些 AI 模型？**
+
+A：OpenAI（GPT-4o 等）、Anthropic（Claude 3.5/3.7 Sonnet）、Google Gemini（2.5 Pro/Flash）、DeepSeek（Chat/Reasoner）、Moonshot（Kimi 系列）。你也可以在 AI 设置里填入自己的代理地址。
+
+**Q：我的代码安全吗？**
+
+A：所有代码都留在你的本地机器上，只有你提问时 AI 需要的那部分代码会被发送到你配置的 AI 服务商。不会上传到第三方服务器。
+
+---
+
+## License
+
+MIT
